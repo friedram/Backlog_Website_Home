@@ -1,0 +1,678 @@
+/*
+  Phase 2: the Direction C visual system — dark, cinematic, box-art-
+  forward. Dark is the primary theme and the default whenever there's
+  no signal to say otherwise — see BaseLayout.astro for the toggle and
+  the anti-flash script that sets [data-theme] before first paint.
+
+  Every color below is a custom property specifically so a second
+  theme is just a second block of the same variable names — nothing
+  that reads var(--ink) or var(--bg) needs to know which theme is
+  active. Two exceptions that used to be hardcoded hex baked straight
+  into rgba()/# values instead of a var() are called out below, since
+  those would have silently stayed dark-themed forever otherwise:
+  --bg-rgb (the raw components of --bg, for use inside rgba(...)
+  overlays) and --gold-ink (the text color that sits ON TOP of a solid
+  --gold fill, which needs to flip from dark-on-light-gold to
+  light-on-deep-gold once light mode's gold gets darker for contrast).
+*/
+:root {
+  --bg: #0a0912;
+  --bg-rgb: 10, 9, 18;
+  --bg-elevated: #14121c;
+  --bg-elevated-2: #1d1a28;
+  --ink: #f5f2ea;
+  --ink-2: #b7b1c4;
+  --ink-3: #7c7689;
+  --rule: #262233;
+  --rule-strong: #35304533;
+
+  --gold: #e8b84b;
+  --gold-dim: #a9822f;
+  --gold-glow: rgba(232, 184, 75, 0.35);
+  --gold-ink: #1a1408;
+
+  --up: #4fd38a;
+  --up-glow: rgba(79, 211, 138, 0.28);
+  --down: #ef6a63;
+  --down-glow: rgba(239, 106, 99, 0.28);
+  --new: #7c9eff;
+  --new-glow: rgba(124, 158, 255, 0.28);
+
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --body: "Newsreader", Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --fast: 150ms;
+  --slow: 420ms;
+
+  color-scheme: dark;
+}
+
+/*
+  Light theme — a premium gaming-magazine page, not a stark white
+  document. Background is a warm parchment/cream rather than pure
+  white (nothing here should read as "blinding"), ink stays close to
+  the dark theme's near-black hue family for brand continuity, and
+  gold gets deepened to a richer amber since the pale dark-mode gold
+  (#e8b84b) doesn't have enough contrast against a light background
+  to work as body text or link color.
+*/
+:root[data-theme="light"] {
+  --bg: #f6f3ec;
+  --bg-rgb: 246, 243, 236;
+  --bg-elevated: #efe9db;
+  --bg-elevated-2: #e5ddc9;
+  --ink: #201a2e;
+  --ink-2: #5c566b;
+  --ink-3: #847e93;
+  --rule: #ded5c1;
+  --rule-strong: #b8aec355;
+
+  --gold: #a3670f;
+  --gold-dim: #7a4f0c;
+  --gold-glow: rgba(163, 103, 15, 0.2);
+  --gold-ink: #fff6e6;
+
+  --up: #1f8f5a;
+  --up-glow: rgba(31, 143, 90, 0.16);
+  --down: #c23b33;
+  --down-glow: rgba(194, 59, 51, 0.16);
+  --new: #3552c4;
+  --new-glow: rgba(53, 82, 196, 0.16);
+
+  color-scheme: light;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --fast: 0ms; --slow: 0ms; }
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+h1, h2, h3 {
+  font-family: var(--display);
+  line-height: 1.1;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+a { color: var(--gold); text-decoration-color: var(--gold-glow); }
+a:hover { color: #f2c869; }
+
+::selection { background: var(--gold-glow); color: var(--ink); }
+
+.wrap {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding-inline: 24px;
+}
+
+/* ---------- header ---------- */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(var(--bg-rgb), 0.78);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--rule);
+}
+.site-header .bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 16px;
+}
+.wordmark {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: none;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.wordmark .dot { color: var(--gold); }
+.site-nav-row {
+  border-top: 1px solid var(--rule);
+  padding-block: 10px;
+}
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.site-nav a { text-decoration: none; color: var(--ink-2); transition: color var(--fast) var(--ease); }
+.site-nav a:hover { color: var(--gold); }
+.site-nav a[aria-current="page"] { color: var(--gold); }
+
+/*
+  Icon-swap via CSS, no re-render — both icons are always in the DOM,
+  [data-theme] on <html> decides which is visible. This means the
+  toggle's appearance updates the instant the attribute flips, with
+  zero dependency on the click handler script also touching the icon.
+*/
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--bg-elevated);
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: color var(--fast) var(--ease), border-color var(--fast) var(--ease), background var(--fast) var(--ease);
+}
+.theme-toggle:hover { color: var(--gold); border-color: var(--gold-dim); }
+.theme-toggle .icon { width: 17px; height: 17px; display: block; }
+.theme-toggle .icon-moon { display: none; }
+:root[data-theme="light"] .theme-toggle .icon-sun { display: none; }
+:root[data-theme="light"] .theme-toggle .icon-moon { display: block; }
+
+/* ---------- movement badge ---------- */
+
+.movement-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  padding: 4px 10px 4px 8px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.movement-pill.up { color: var(--up); background: var(--up-glow); border-color: color-mix(in srgb, var(--up) 40%, transparent); }
+.movement-pill.down { color: var(--down); background: var(--down-glow); border-color: color-mix(in srgb, var(--down) 40%, transparent); }
+.movement-pill.new { color: var(--new); background: var(--new-glow); border-color: color-mix(in srgb, var(--new) 40%, transparent); }
+.movement-pill.same { color: var(--ink-3); background: var(--bg-elevated-2); }
+
+/* ---------- hero (homepage #1) ---------- */
+
+.hero-panel {
+  position: relative;
+  margin-top: 28px;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  background: var(--bg-elevated);
+  isolation: isolate;
+}
+.hero-panel .backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-size: cover;
+  background-position: center 20%;
+  filter: saturate(1.05) brightness(0.55) blur(1px);
+  transform: scale(1.05);
+}
+.hero-panel .scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(180deg, rgba(var(--bg-rgb),0.15) 0%, rgba(var(--bg-rgb),0.55) 55%, rgba(var(--bg-rgb),0.96) 100%),
+    linear-gradient(90deg, rgba(var(--bg-rgb),0.85) 0%, rgba(var(--bg-rgb),0.15) 55%);
+}
+.hero-panel .content {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(160px, 220px) 1fr;
+  gap: 32px;
+  align-items: end;
+  padding: 40px;
+  min-height: 360px;
+}
+.hero-panel .art {
+  width: 100%;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 24px 48px -12px rgba(0,0,0,0.6), 0 0 0 1px var(--rule);
+}
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+.hero-rank {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(3.5rem, 9vw, 6rem);
+  line-height: 0.85;
+  color: var(--ink);
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.hero-rank .sym { color: var(--gold); }
+.hero-panel h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); margin-top: 6px; }
+.hero-meta { color: var(--ink-2); font-family: var(--mono); font-size: 0.9rem; margin-top: 6px; }
+.hero-take {
+  font-size: 1.15rem;
+  color: var(--ink);
+  max-width: 46rem;
+  margin-top: 14px;
+  font-style: italic;
+}
+.hero-cta {
+  margin-top: 20px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.btn {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 11px 20px;
+  border-radius: 8px;
+  transition: transform var(--fast) var(--ease), box-shadow var(--fast) var(--ease);
+  display: inline-block;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn.primary { background: var(--gold); color: var(--gold-ink); }
+.btn.primary:hover { box-shadow: 0 8px 24px -6px var(--gold-glow); color: var(--gold-ink); }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--rule-strong); }
+.btn.ghost:hover { border-color: var(--gold-dim); color: var(--gold); }
+
+@media (max-width: 680px) {
+  .hero-panel .content { grid-template-columns: 1fr; padding: 24px; min-height: 0; }
+  .hero-panel .art { max-width: 160px; }
+  /*
+    The scrim gradient is tuned for the two-column desktop layout,
+    where the text sits at a predictable height inside a short panel.
+    Stacked on mobile, the panel gets much taller and the same gradient
+    stops fall behind the wrong content — the backdrop art was bleeding
+    through and double-printing behind the title. Simplest fix: drop
+    the backdrop image on small screens and use a flat surface color
+    instead of trying to retune the gradient math for every height.
+  */
+  .hero-panel .backdrop { display: none; }
+  .hero-panel .scrim { display: none; }
+  .hero-panel { background: var(--bg-elevated); }
+}
+
+/* ---------- section heading ---------- */
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 56px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.section-head h2 {
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.section-head .see-all { font-family: var(--display); font-weight: 600; font-size: 0.85rem; text-decoration: none; }
+
+/* ---------- countdown rows (homepage + countdown view) ---------- */
+
+.countdown-list { display: flex; flex-direction: column; gap: 10px; }
+
+.countdown-row {
+  display: grid;
+  grid-template-columns: 4.5rem 5rem 1fr auto;
+  grid-template-areas: "num thumb info side";
+  align-items: center;
+  gap: 20px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 1px solid var(--rule);
+  background: var(--bg-elevated);
+  text-decoration: none;
+  color: inherit;
+  transition: background var(--fast) var(--ease), border-color var(--fast) var(--ease), transform var(--fast) var(--ease);
+}
+.countdown-row .num { grid-area: num; }
+.countdown-row .thumb { grid-area: thumb; }
+.countdown-row .info { grid-area: info; }
+.countdown-row .side { grid-area: side; }
+.countdown-row:hover {
+  background: var(--bg-elevated-2);
+  border-color: var(--rule-strong);
+  transform: translateX(2px);
+}
+.countdown-row .num {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 2.1rem;
+  color: var(--ink-3);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+/*
+  Driven by an explicit rank===1 check from the component, not
+  :nth-child(1) — this list doesn't always start at rank #1 (the
+  homepage's "rest of the top five" list starts at #2), and the old
+  positional selector would have gold-highlighted whatever happened
+  to render first rather than the actual #1 game.
+*/
+.countdown-row.is-first {
+  border-color: color-mix(in srgb, var(--gold) 45%, var(--rule));
+  background: linear-gradient(90deg, color-mix(in srgb, var(--gold) 7%, var(--bg-elevated)), var(--bg-elevated));
+}
+.countdown-row.is-first .num { color: var(--gold); text-shadow: 0 0 24px var(--gold-glow); }
+.countdown-row .thumb {
+  width: 100%;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  border-radius: 6px;
+  background: var(--bg-elevated-2);
+}
+.countdown-row .info h3 { font-size: 1.1rem; }
+.countdown-row .info .meta { font-family: var(--mono); font-size: 0.78rem; color: var(--ink-3); margin-top: 3px; }
+.countdown-row .side { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+
+@media (max-width: 640px) {
+  /*
+    Keep the movement badge visible on mobile rather than hiding it —
+    "movement should be visually obvious" is a hard requirement, and
+    most visitors here are on a phone. Give it its own row instead,
+    right-aligned under the title/meta column.
+  */
+  .countdown-row {
+    grid-template-columns: 3rem 3.4rem 1fr;
+    grid-template-areas:
+      "num thumb info"
+      "num thumb side";
+    row-gap: 6px;
+    gap: 12px;
+    padding: 10px 12px;
+  }
+  .countdown-row .side { justify-self: end; }
+  .countdown-row .num { font-size: 1.5rem; }
+}
+
+/* ---------- mosaic grid ---------- */
+
+.mosaic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 18px;
+}
+.mosaic-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg-elevated);
+  border: 1px solid var(--rule);
+  transition: transform var(--fast) var(--ease), border-color var(--fast) var(--ease);
+}
+.mosaic-card:hover { transform: translateY(-3px); border-color: var(--rule-strong); }
+.mosaic-card .art-wrap { position: relative; overflow: hidden; aspect-ratio: 3/4; }
+.mosaic-card img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform var(--slow) var(--ease);
+}
+.mosaic-card:hover img { transform: scale(1.06); }
+.mosaic-card .rank-chip {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 1.1rem;
+  color: var(--ink);
+  background: rgba(var(--bg-rgb),0.72);
+  backdrop-filter: blur(4px);
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--rule-strong);
+}
+.mosaic-card .rank-chip .sym { color: var(--gold); margin-right: 2px; }
+.mosaic-card .fade {
+  position: absolute; inset: auto 0 0 0; height: 60%;
+  background: linear-gradient(180deg, transparent, rgba(var(--bg-rgb),0.95));
+  pointer-events: none;
+}
+.mosaic-card .body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 6px; }
+.mosaic-card h3 { font-size: 1rem; }
+.mosaic-card .meta { font-family: var(--mono); font-size: 0.76rem; color: var(--ink-3); }
+
+.mosaic-card.is-first {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px var(--gold), 0 20px 40px -12px var(--gold-glow);
+}
+.mosaic-card.is-first .rank-chip {
+  background: var(--gold);
+  color: var(--gold-ink);
+  border-color: var(--gold);
+}
+.mosaic-card.is-first .rank-chip .sym { color: var(--gold-ink); }
+
+/* ---------- view toggle (CSS-only, no JS) ---------- */
+
+.view-toggle-input { position: absolute; opacity: 0; pointer-events: none; }
+.view-toggle {
+  display: inline-flex;
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
+  background: var(--bg-elevated);
+}
+.view-toggle label {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 7px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  color: var(--ink-2);
+  transition: background var(--fast) var(--ease), color var(--fast) var(--ease);
+}
+.view-toggle label:hover { color: var(--ink); }
+
+#view-countdown:checked ~ .section-head .view-toggle label[for="view-countdown"],
+#view-mosaic:checked ~ .section-head .view-toggle label[for="view-mosaic"] {
+  background: var(--gold);
+  color: var(--gold-ink);
+}
+
+.view-panels { margin-top: 28px; }
+
+/* default (no JS, no CSS support edge case) shows countdown */
+.view-panels .panel-mosaic { display: none; }
+.view-panels .panel-countdown { display: block; }
+
+#view-mosaic:checked ~ .view-panels .panel-mosaic { display: block; }
+#view-mosaic:checked ~ .view-panels .panel-countdown { display: none; }
+
+/* ---------- game detail ---------- */
+
+.game-detail { padding-block: 40px 64px; }
+.back-link {
+  display: inline-block;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--ink-2);
+  text-decoration: none;
+  margin-bottom: 24px;
+}
+.back-link:hover { color: var(--ink); }
+.detail-hero {
+  display: grid;
+  grid-template-columns: minmax(200px, 260px) 1fr;
+  gap: 32px;
+  align-items: start;
+}
+.detail-hero .art {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--rule);
+  box-shadow: 0 24px 48px -16px rgba(0,0,0,0.55);
+}
+.detail-rank-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.detail-rank-row .num { font-family: var(--display); font-weight: 900; font-size: 2.2rem; color: var(--gold); line-height: 1; }
+.detail-hero h1 { font-size: clamp(1.9rem, 3.4vw, 2.6rem); margin-top: 4px; }
+.detail-meta { font-family: var(--mono); font-size: 0.88rem; color: var(--ink-3); margin-top: 8px; }
+.detail-tags { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; }
+
+.tag {
+  display: inline-block; font-family: var(--display); font-size: 0.72rem;
+  font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  background: var(--bg-elevated-2); color: var(--ink-2);
+  padding: 4px 11px; border-radius: 20px;
+  border: 1px solid var(--rule);
+}
+
+.eyebrow-label {
+  margin-top: 36px;
+  margin-bottom: 0;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.eyebrow-label.muted { color: var(--ink-3); letter-spacing: 0.1em; }
+
+.take-block {
+  margin-top: 10px;
+  padding: 24px 28px;
+  border-left: 3px solid var(--gold);
+  background: var(--bg-elevated);
+  border-radius: 0 12px 12px 0;
+  font-size: 1.2rem;
+  font-style: italic;
+  line-height: 1.65;
+}
+.summary-block { margin-top: 20px; color: var(--ink-2); font-size: 1rem; max-width: 46rem; }
+
+/* Neutral, deliberately plainer than .take-block — a generated
+   summary should never be visually mistaken for a real opinion. */
+.summary-pending-block {
+  margin-top: 10px;
+  padding: 18px 22px;
+  border: 1px dashed var(--rule-strong);
+  border-radius: 10px;
+  color: var(--ink-2);
+  font-size: 1rem;
+  line-height: 1.6;
+  max-width: 46rem;
+}
+
+.media-block { margin-top: 36px; }
+.media-block h2 { font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--ink-2); margin-bottom: 14px; }
+.media-block img {
+  width: 100%; max-width: 640px; border-radius: 10px; border: 1px solid var(--rule);
+  display: block;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+.gallery-item { margin: 0; }
+.gallery-item img {
+  width: 100%; border-radius: 10px; border: 1px solid var(--rule);
+  display: block;
+}
+.gallery-item figcaption {
+  margin-top: 8px; font-family: var(--mono); font-size: 0.85rem;
+  color: var(--ink-3); line-height: 1.5;
+}
+
+.expansions-list { display: flex; flex-direction: column; gap: 20px; max-width: 46rem; }
+.expansion-item {
+  padding-left: 16px; border-left: 2px solid var(--rule);
+  display: flex; gap: 16px; align-items: flex-start;
+}
+.expansion-item img.expansion-image {
+  width: 110px; height: auto; flex-shrink: 0;
+  border-radius: 8px; border: 1px solid var(--rule); display: block;
+}
+.expansion-text { flex: 1; min-width: 0; }
+.expansion-item h3 { font-size: 1rem; margin: 0 0 6px; color: var(--ink); }
+.expansion-item p { margin: 0; font-size: 0.95rem; line-height: 1.6; color: var(--ink-2); }
+.expansion-item p.expansion-meta {
+  margin-top: 6px; font-family: var(--mono); font-size: 0.8rem;
+  color: var(--ink-3); display: flex; gap: 10px; flex-wrap: wrap;
+}
+.expansion-item .expansion-date { color: var(--ink-3); }
+.expansion-item .expansion-notes::before { content: "· "; }
+
+.collection-dlc-block {
+  margin-top: 44px; padding-top: 24px; border-top: 1px solid var(--rule);
+}
+.collection-dlc-heading { font-size: 1rem; }
+
+.video-embed {
+  position: relative; width: 100%; max-width: 720px;
+  aspect-ratio: 16/9; border-radius: 10px; overflow: hidden;
+  border: 1px solid var(--rule); background: var(--bg-elevated);
+}
+.video-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+.detail-links { margin-top: 28px; display: flex; gap: 20px; flex-wrap: wrap; }
+.detail-links a { font-family: var(--display); font-weight: 600; font-size: 0.92rem; text-decoration: none; }
+.detail-links a:hover { text-decoration: underline; }
+
+.unranked-note {
+  font-family: var(--mono); font-size: 0.85rem; color: var(--ink-3);
+  border: 1px dashed var(--rule-strong); border-radius: 8px;
+  padding: 8px 14px; display: inline-block;
+}
+
+@media (max-width: 640px) {
+  .detail-hero { grid-template-columns: 1fr; }
+  .detail-hero .art { max-width: 220px; }
+  .expansion-item { flex-direction: column; }
+  .expansion-item img.expansion-image { width: 100%; max-width: 200px; }
+}
+
+/* ---------- footer ---------- */
+
+.site-footer {
+  border-top: 1px solid var(--rule);
+  margin-top: 80px;
+  padding-block: 28px;
+  color: var(--ink-3);
+  font-size: 0.85rem;
+}

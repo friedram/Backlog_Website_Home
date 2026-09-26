@@ -1,0 +1,26 @@
+---
+// Same visual as the Ranked Games repo's CountdownRow.astro, but reads
+// from a plain FeedGame object (see src/lib/rankedFeed.ts) instead of an
+// astro:content CollectionEntry<"games"> — this repo doesn't own the
+// games collection, so it can't import that component directly. Any
+// visual change made to .countdown-row/.movement-pill in tokens.css
+// (shared verbatim from the Ranked Games repo) applies here too.
+import RankBadge from "./RankBadge.astro";
+import type { FeedGame } from "../lib/rankedFeed";
+
+interface Props {
+  game: FeedGame;
+}
+const { game } = Astro.props;
+---
+<a class:list={["countdown-row", game.rank === 1 && "is-first"]} href={game.href}>
+  <span class="num">#{game.rank}</span>
+  <img class="thumb" src={game.boxArtUrl} alt={`${game.title} box art`} loading="lazy" />
+  <div class="info">
+    <h3>{game.title}</h3>
+    <p class="meta">{game.platform.join(", ")} · {game.releaseYear} · {game.genre.join(", ")}</p>
+  </div>
+  <div class="side">
+    <RankBadge rank={game.rank} previousRank={game.previousRank} />
+  </div>
+</a>

@@ -1,0 +1,17 @@
+# Recent Activity — hand-maintained, on purpose (Andy's decision,
+# 2026-09-24: no automated git-history feed). Same "no parallel value to
+# keep in sync" principle as the Ranked Games repo's ranking.yaml: this
+# file IS the activity log, not a mirror of one that lives somewhere else.
+#
+# Add a new entry at the TOP of the list (newest first) whenever
+# something worth mentioning happens — a rank change, a new game added,
+# a new podcast episode, a new gallery photo. Keep entries short, one
+# line, in the "did X to Y" style below.
+#
+# date is a plain YYYY-MM-DD string, shown as-is — no relative-time math,
+# so there's nothing to get wrong across time zones or stale builds.
+
+- text: "Added The Witcher 3 and Warhammer 40,000: Rogue Trader to the ranking"
+  date: "2026-09-24"
+- text: "Published Episode 0 — What Happened to Chun Li's Face?!"
+  date: "2025-12-01"

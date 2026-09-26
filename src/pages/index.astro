@@ -1,0 +1,129 @@
+---
+// Home — the dashboard. See site-redesign-proposal.md's Home section
+// for the content plan this implements: a rotating hero built from the
+// physical collection, a 2x2 dashboard (Featured Ranked Game, Latest
+// Podcast, Featured Gallery Image, Recent Activity), and a "Currently
+// Climbing" strip teasing the flagship Ranked Games page.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import HeroRotator from "../components/HeroRotator.astro";
+import ClimbingRow from "../components/ClimbingRow.astro";
+import { getCollection } from "astro:content";
+import { getRankedFeed } from "../lib/rankedFeed";
+import { getActivity } from "../lib/activity";
+import { withBase, galleryImageSrc } from "../lib/site";
+
+const gallery = await getCollection("gallery");
+const heroSlides = gallery.filter((g) => g.data.hero);
+const featuredImage = gallery.find((g) => g.data.featured) ?? gallery[0] ?? null;
+
+const podcasts = await getCollection("podcasts");
+const latestPodcast = podcasts.sort((a, b) => b.data.publishDate.localeCompare(a.data.publishDate))[0] ?? null;
+
+const feed = await getRankedFeed();
+const featuredGame = feed.find((g) => g.rank === 1) ?? feed[0] ?? null;
+const climbing = feed.slice(0, 5);
+
+const activity = getActivity().slice(0, 4);
+---
+<BaseLayout title="Home">
+  <HeroRotator slides={heroSlides} />
+  <div class="wrap">
+    <div class="dashboard-grid">
+      <!-- Featured Ranked Game -->
+      {featuredGame ? (
+        <a class="dashboard-tile" href={featuredGame.href}>
+          <span class="tag">Featured Ranked Game</span>
+          <div class="tile-media tall">
+            <img src={featuredGame.boxArtUrl} alt={`${featuredGame.title} box art`} />
+            <div>
+              <h3>№{featuredGame.rank} — {featuredGame.title}</h3>
+              <p class="d">{featuredGame.platform.join(", ")} · {featuredGame.releaseYear}</p>
+            </div>
+          </div>
+        </a>
+      ) : (
+        <div class="dashboard-tile">
+          <span class="tag">Featured Ranked Game</span>
+          <p class="d">Nothing to show yet — this fills in once the Ranked Games feed is live (see rankedFeed.ts).</p>
+        </div>
+      )}
+
+      <!-- Latest Podcast -->
+      {latestPodcast ? (
+        <a class="dashboard-tile" href={latestPodcast.data.listenUrl}>
+          <span class="tag">Latest Podcast</span>
+          <div class="tile-media">
+            {latestPodcast.data.coverImage && (
+              <img src={withBase(`/images/podcasts/${latestPodcast.data.coverImage}`)} alt={`${latestPodcast.data.title} cover art`} />
+            )}
+            <div>
+              <h3>{latestPodcast.data.title}</h3>
+              <p class="d">Listen on Audiomack →</p>
+            </div>
+          </div>
+        </a>
+      ) : (
+        <div class="dashboard-tile">
+          <span class="tag">Latest Podcast</span>
+          <p class="d">No episodes yet — add one to src/content/podcasts/.</p>
+        </div>
+      )}
+
+      <!-- Featured Gallery Image -->
+      {featuredImage ? (
+        <a class="dashboard-tile" href="https://deathbybacklog.com/other/images/">
+          <span class="tag">Featured Gallery Image</span>
+          <div class="tile-media">
+            <img src={galleryImageSrc(featuredImage.data.image)} alt={featuredImage.data.caption ?? "From the collection"} />
+            <div>
+              <h3>{featuredImage.data.caption ?? "From the collection"}</h3>
+              <p class="d">See the full Collection Gallery →</p>
+            </div>
+          </div>
+        </a>
+      ) : (
+        <div class="dashboard-tile">
+          <span class="tag">Featured Gallery Image</span>
+          <p class="d">No gallery entries yet — add one to src/content/gallery/.</p>
+        </div>
+      )}
+
+      <!-- Recent Activity -->
+      <div class="dashboard-tile">
+        <span class="tag">Recent Activity</span>
+        {activity.length > 0 ? (
+          <ul class="activity-list">
+            {activity.map((a) => (
+              <li>
+                <span>{a.text}</span>
+                <time>{a.date}</time>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="d">Nothing logged yet — add an entry to src/content/activity.yaml.</p>
+        )}
+      </div>
+    </div>
+
+    <div class="section-head" id="climbing">
+      <div>
+        <h2>Currently Climbing</h2>
+        <p style="color:var(--ink-2); margin-top:6px">The top of the ranking, straight from Ranked Games.</p>
+      </div>
+      <a class="see-all" href="https://deathbybacklog.com/ranked-games">See the Full Ranking →</a>
+    </div>
+
+    <div class="climbing-strip">
+      {climbing.length > 0 ? (
+        <div class="countdown-list">
+          {climbing.map((game) => <ClimbingRow game={game} />)}
+        </div>
+      ) : (
+        <p style="color:var(--ink-3)">
+          Nothing to show yet — this fills in once the Ranked Games repo's home-feed.json is live.
+        </p>
+      )}
+    </div>
+  </div>
+</BaseLayout>

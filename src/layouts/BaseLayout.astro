@@ -1,0 +1,115 @@
+---
+// Shared header/nav for the redesign — the design system this comes
+// from is the Ranked Games repo's BaseLayout.astro (same tokens.css,
+// same markup pattern, same anti-flash theme script). This version
+// carries the FULL confirmed nav order (site-redesign-proposal.md,
+// "Confirmed navigation order," locked 2026-09-24):
+//
+//   Home · Podcasts · Ranked Games · ID@Xbox · About · Other ▾ · Users ▾
+//
+// This site is a review deploy at /home-preview/ (see astro.config.mjs)
+// — WordPress still serves the real "/" for now — so "Home" points at
+// this site's own root via withBase("/"), while every other nav item
+// still points at the live WordPress pages, exactly the same way the
+// Ranked Games repo's nav points out to WordPress today. When Home is
+// promoted to the real domain root later, this list is what gets
+// updated (and duplicated into whichever repo builds Podcasts/About/
+// etc. next) — not redesigned again.
+import "../styles/tokens.css";
+import "../styles/home.css";
+import { withBase } from "../lib/site";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description = "The games worth talking about right now, ranked by hand." } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{title} · Death By Backlog</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,600;0,700;0,900;1,700&family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script is:inline>
+      (function () {
+        var STORAGE_KEY = "dbb-theme";
+        try {
+          var stored = localStorage.getItem(STORAGE_KEY);
+          var theme =
+            stored === "light" || stored === "dark"
+              ? stored
+              : window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches
+                ? "light"
+                : "dark";
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap bar">
+        <a class="wordmark" href={withBase("/")}>Death By Backlog<span class="dot">.</span></a>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch to light theme">
+          <svg class="icon icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+          </svg>
+          <svg class="icon icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="wrap site-nav-row">
+        <nav class="site-nav" aria-label="Death By Backlog">
+          <a href={withBase("/")} aria-current={title === "Home" ? "page" : undefined}>Home</a>
+          <a href="https://deathbybacklog.com/podcasts/">Podcasts</a>
+          <a href="https://deathbybacklog.com/ranked-games">Ranked Games</a>
+          <a href="https://deathbybacklog.com/idatxbox/">ID@Xbox</a>
+          <a href="https://deathbybacklog.com/about/">About</a>
+          <a href="https://deathbybacklog.com/other/">Other</a>
+          <a href="https://deathbybacklog.com/users/">Users</a>
+        </nav>
+      </div>
+    </header>
+    <slot />
+    <footer class="site-footer">
+      <div class="wrap">
+        Death By Backlog — a ranked list, curated and updated by hand.
+      </div>
+    </footer>
+    <script is:inline>
+      (function () {
+        var STORAGE_KEY = "dbb-theme";
+        var root = document.documentElement;
+        var btn = document.getElementById("theme-toggle");
+        if (!btn) return;
+        function labelFor(theme) {
+          return theme === "light" ? "Switch to dark theme" : "Switch to light theme";
+        }
+        btn.setAttribute("aria-label", labelFor(root.getAttribute("data-theme") === "light" ? "light" : "dark"));
+        btn.addEventListener("click", function () {
+          var current = root.getAttribute("data-theme") === "light" ? "light" : "dark";
+          var next = current === "light" ? "dark" : "light";
+          root.setAttribute("data-theme", next);
+          btn.setAttribute("aria-label", labelFor(next));
+          try {
+            localStorage.setItem(STORAGE_KEY, next);
+          } catch (e) {
+            /* no localStorage available — theme still works for this page view */
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

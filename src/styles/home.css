@@ -1,0 +1,210 @@
+/*
+  Additive to tokens.css (copied verbatim from the Ranked Games repo —
+  see that file for the token definitions and the shared header/nav/
+  hero-panel/countdown-row/movement-pill rules this page also uses).
+  Everything in here is new: the rotating hero, the dashboard grid, and
+  the small tweaks needed to reuse .countdown-row/.countdown-list for
+  the "Currently Climbing" strip on Home.
+*/
+
+/* ---------- rotating hero ---------- */
+
+/* Full-bleed: the photo IS the background, edge to edge under the sticky
+   header, not a bordered card floating inside the page's content column
+   (Andy's call, 2026-09-25 — "image for the entire background, and then
+   a carousel of the images"). This sits OUTSIDE index.astro's .wrap on
+   purpose so it isn't constrained to the 72rem content width; the
+   caption text still aligns to that column via the nested .wrap inside
+   figcaption below, so it reads as one page, not a misaligned banner. */
+.hero-rotator {
+  position: relative;
+  width: 100%;
+  height: min(64vh, 620px);
+  min-height: 420px;
+  overflow: hidden;
+  background: var(--bg-elevated);
+  isolation: isolate;
+}
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  animation-name: hero-rotator-fade;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+.hero-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(1.05) brightness(0.62);
+}
+.hero-slide::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Deliberately NOT var(--bg-rgb): this scrim sits on a photograph,
+     not the page background, so it needs to stay a dark wash in both
+     themes. In light theme, var(--bg-rgb) is a pale cream — at 0.9
+     opacity it still let bright box-art colors show through unevenly
+     behind the caption, which combined with light theme's dark --ink
+     text produced patches of dark-on-dark, illegible text (caught via
+     screenshot QA, light theme, both desktop and mobile). A fixed
+     near-black scrim + fixed light caption text below fixes this the
+     same way a photo caption on any premium site works, regardless of
+     the site's own light/dark toggle. */
+  background: linear-gradient(180deg, rgba(6,5,10,0.1) 40%, rgba(6,5,10,0.92) 100%);
+}
+.hero-slide figcaption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding-block: 36px;
+}
+/* The figcaption itself spans full width (it's part of the full-bleed
+   photo); this inner .wrap is what lines the actual text up with the
+   page's 72rem content column instead of pinning it to the screen edge. */
+.hero-slide figcaption .wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.hero-rotator-eyebrow {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  /* Fixed dark-theme gold, not var(--gold) — see the scrim comment
+     above. Light theme's --gold is a deep amber tuned for readability
+     on the light page background, not on a dark image scrim. */
+  color: #e8b84b;
+  margin: 0;
+}
+.hero-rotator-caption {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.75rem;
+  /* Fixed light ink — see the scrim comment above. */
+  color: #f5f2ea;
+  margin: 0;
+  max-width: 40rem;
+}
+.hero-rotator-dots {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  gap: 8px;
+  z-index: 2;
+}
+.hero-rotator-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  /* Fixed dark-theme gold — see the scrim comment above. */
+  background: #e8b84b;
+  opacity: 0.4;
+  animation-name: hero-rotator-dot-fade;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+@media (max-width: 680px) {
+  /* Still full-bleed on mobile, just shorter and with a tighter caption
+     — enough room for the image to actually read as a background rather
+     than a strip, without pushing the dashboard too far down the page.
+     The fixed min-height keeps very short crossfade cycles (few slides)
+     from collapsing on short viewports. */
+  .hero-rotator { height: 46vh; min-height: 320px; max-height: 460px; }
+  .hero-rotator-caption { font-size: 1.15rem; }
+  .hero-slide figcaption { padding-block: 22px; }
+}
+
+/* ---------- dashboard (2x2 module grid) ---------- */
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 28px;
+}
+@media (max-width: 680px) {
+  .dashboard-grid { grid-template-columns: 1fr; }
+}
+.dashboard-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid var(--rule);
+  background: var(--bg-elevated);
+  text-decoration: none;
+  color: inherit;
+  transition: background var(--fast) var(--ease), border-color var(--fast) var(--ease), transform var(--fast) var(--ease);
+}
+.dashboard-tile:hover {
+  background: var(--bg-elevated-2);
+  border-color: var(--rule-strong);
+  transform: translateY(-2px);
+}
+.dashboard-tile .tag {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.dashboard-tile .tile-media {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+.dashboard-tile .tile-media img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: var(--bg-elevated-2);
+  flex: none;
+}
+.dashboard-tile .tile-media.tall img {
+  width: 56px;
+  height: 74px;
+}
+.dashboard-tile h3 {
+  font-size: 1.05rem;
+  margin: 0;
+}
+.dashboard-tile .d {
+  color: var(--ink-2);
+  font-size: 0.9rem;
+  margin: 0;
+}
+.dashboard-tile .activity-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.dashboard-tile .activity-list li {
+  font-size: 0.9rem;
+  color: var(--ink-2);
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.dashboard-tile .activity-list time {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+/* ---------- climbing strip ---------- */
+
+.climbing-strip .countdown-list { gap: 10px; }

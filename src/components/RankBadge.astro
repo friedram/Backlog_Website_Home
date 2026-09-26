@@ -1,0 +1,29 @@
+---
+// Turns rank + previousRank into a visually obvious movement pill.
+// Copied verbatim from the Ranked Games repo (src/components/RankBadge.astro)
+// as part of sharing its design system — this component only ever takes
+// plain numbers, so it works unmodified against the JSON feed here too.
+interface Props {
+  rank: number;
+  previousRank: number | null;
+}
+const { rank, previousRank } = Astro.props;
+
+let label = "—";
+let direction: "up" | "down" | "new" | "same" = "same";
+
+if (previousRank === null) {
+  label = "NEW";
+  direction = "new";
+} else if (rank < previousRank) {
+  label = `▲ ${previousRank - rank}`;
+  direction = "up";
+} else if (rank > previousRank) {
+  label = `▼ ${rank - previousRank}`;
+  direction = "down";
+} else {
+  label = "NO CHANGE";
+  direction = "same";
+}
+---
+<span class:list={["movement-pill", direction]}>{label}</span>
