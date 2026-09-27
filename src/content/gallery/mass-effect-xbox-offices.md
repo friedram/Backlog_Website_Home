@@ -4,4 +4,5 @@ caption: "Mass Effect artwork in the Xbox offices, Redmond"
 tag: "field trip"
 hero: true
 featured: false
+fit: "contain"
 ---

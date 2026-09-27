@@ -36,6 +36,15 @@ const gallery = defineCollection({
     tag: z.string().optional(), // free text, e.g. "shelf", "collector's edition", "setup"
     hero: z.boolean().default(false),
     featured: z.boolean().default(false),
+    // How the hero rotator crops this slide's photo. "cover" (default)
+    // fills the full-bleed hero frame, cropping edges as needed — right
+    // for shelf/room photos where the surroundings don't matter. "contain"
+    // shows the whole photo uncropped against a blurred backdrop of the
+    // same image — for photos where the whole frame IS the point (a
+    // painting, a piece of framed art) and cropping it would lose the
+    // thing you're actually showing off. Andy's call, 2026-09-27, for the
+    // Halo Museum and Mass Effect office photos specifically.
+    fit: z.enum(["cover", "contain"]).default("cover"),
   }),
 });
 

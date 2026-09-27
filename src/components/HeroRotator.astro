@@ -22,9 +22,19 @@ const n = slides.length;
 ---
 {n > 0 && (
   <div class="hero-rotator" data-hero-rotator data-count={n}>
-    {slides.map((slide, i) => (
-      <figure class="hero-slide" class:list={{ "is-active": i === 0 }} data-index={i}>
-        <img src={galleryImageSrc(slide.data.image)} alt={slide.data.caption ?? "From the collection"} loading={i === 0 ? "eager" : "lazy"} />
+    {slides.map((slide, i) => {
+      const src = galleryImageSrc(slide.data.image);
+      const contain = slide.data.fit === "contain";
+      return (
+      <figure class="hero-slide" class:list={{ "is-active": i === 0, "is-contain": contain }} data-index={i}>
+        {contain && (
+          // Whole-photo slides (a painting, framed art) get a blurred
+          // copy of the same image filling the frame behind them, so the
+          // uncropped photo can float centered without empty/plain-color
+          // bars on either side — see content.config.ts's `fit` comment.
+          <div class="hero-slide-backdrop" style={`background-image:url(${src})`} aria-hidden="true"></div>
+        )}
+        <img src={src} alt={slide.data.caption ?? "From the collection"} loading={i === 0 ? "eager" : "lazy"} />
         <figcaption>
           <div class="wrap">
             <span class="hero-rotator-eyebrow">From the collection</span>
@@ -32,7 +42,8 @@ const n = slides.length;
           </div>
         </figcaption>
       </figure>
-    ))}
+      );
+    })}
     {n > 1 && (
       <div class="hero-rotator-dots">
         {slides.map((slide, i) => (

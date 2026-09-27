@@ -44,6 +44,52 @@
   height: 100%;
   object-fit: cover;
   filter: saturate(1.05) brightness(0.62);
+  position: relative;
+}
+/* "Contain" slides (fit: "contain" in the gallery entry) — a photo of a
+   painting or framed art where cropping would lose the actual subject.
+   The blurred backdrop fills the frame edge-to-edge (same treatment as a
+   music app's now-playing screen); the real photo floats on top, whole
+   and uncropped, only as large as its own aspect ratio allows. */
+.hero-slide-backdrop {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(32px) saturate(1.15) brightness(0.5);
+  transform: scale(1.15); /* hides the blur's soft edge past the frame */
+}
+.hero-slide.is-contain img {
+  /* Explicit width/height (100% / calc(100% - Npx)), not an inset
+     shorthand — an absolutely-positioned <img> with width/height left
+     "auto" falls back to the image's own intrinsic pixel size instead of
+     being sized by its offsets (a replaced-element quirk, confirmed via
+     computed-style inspection), so object-fit:contain silently does
+     nothing without an explicit box to fit inside. The bottom slice is
+     reserved (not full height, unlike the cover treatment's plain
+     100%/100%) because a tall/portrait photo contained at full hero
+     height otherwise runs straight into the caption's dark scrim, dimming
+     and partly hiding the artwork itself behind the caption text.
+     Reserving that band keeps the whole photo clear and legible; the
+     blurred backdrop (not this img) fills it instead, which reads fine
+     since it's already soft-focus. Caught via screenshot QA, 2026-09-27 —
+     same class of bug as the original mobile-caption-overlap fix below. */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 130px);
+  object-fit: contain;
+  /* Deliberately no dark brightness()/saturate() filter here (unlike the
+     cover treatment above) — these are the whole subject, not a
+     background behind text, so they should read at their true colors,
+     just slightly recessed from the edges for breathing room. */
+  filter: none;
+  padding: 24px;
+  box-sizing: border-box;
+}
+@media (max-width: 680px) {
+  .hero-slide.is-contain img { height: calc(100% - 100px); padding: 14px; }
 }
 .hero-slide::before {
   content: "";
