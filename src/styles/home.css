@@ -30,9 +30,14 @@
   inset: 0;
   margin: 0;
   opacity: 0;
-  animation-name: hero-rotator-fade;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
+  transition: opacity 900ms ease;
+}
+.hero-slide.is-active {
+  opacity: 1;
+  z-index: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide { transition: none; }
 }
 .hero-slide img {
   width: 100%;
@@ -96,19 +101,46 @@
   right: 20px;
   bottom: 20px;
   display: flex;
-  gap: 8px;
+  gap: 10px;
   z-index: 2;
 }
-.hero-rotator-dots span {
+/* Real <button> elements now (were decorative <span>s) so the dots are
+   actually clickable/keyboard-focusable, not just an animated readout —
+   Andy's call, 2026-09-27: "I want the user to be able to click ahead or
+   not." Padding pads out the hit target well past the visible 8px dot,
+   since a bare 8px circle is a rough tap target on mobile. */
+.hero-dot {
+  appearance: none;
+  border: none;
+  background: transparent;
+  padding: 8px;
+  margin: -8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero-dot::before {
+  content: "";
   width: 8px;
   height: 8px;
   border-radius: 999px;
   /* Fixed dark-theme gold — see the scrim comment above. */
   background: #e8b84b;
   opacity: 0.4;
-  animation-name: hero-rotator-dot-fade;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+.hero-dot:hover::before {
+  opacity: 0.7;
+}
+.hero-dot.is-active::before {
+  opacity: 1;
+  transform: scale(1.25);
+}
+.hero-dot:focus-visible {
+  outline: 2px solid #e8b84b;
+  outline-offset: 2px;
+  border-radius: 999px;
 }
 
 @media (max-width: 680px) {

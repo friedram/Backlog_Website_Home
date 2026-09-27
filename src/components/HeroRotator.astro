@@ -1,14 +1,16 @@
 ---
 // Slow-crossfading hero built from the physical collection (gallery
 // entries flagged hero: true) — see site-redesign-proposal.md's Home
-// section. Pure CSS crossfade, no JS: every slide (image + its own
-// caption, faded together as one <figure>) shares one @keyframes rule
-// generated below, sized to however many slides exist, and each slide
-// is offset with its own animation-delay — the standard way to stagger
-// identical CSS animations across elements. tokens.css's global
-// `@media (prefers-reduced-motion: reduce)` rule already zeroes every
-// animation-duration sitewide, which is what freezes this on the first
-// slide for anyone with that preference — nothing extra needed here.
+// section. JS-driven active-class crossfade (not pure CSS): each slide
+// is .hero-slide, the current one gets .is-active, and a small inline
+// script (same pattern as BaseLayout's theme-toggle script) advances a
+// setInterval timer and swaps the class. This replaces the old
+// @keyframes-per-slide approach specifically so the dots can be real,
+// clickable <button> elements — you can't click "into" a specific
+// offset of a running CSS animation, but jumping to an index and
+// restarting a JS timer is trivial. Autoplay is skipped entirely for
+// prefers-reduced-motion, since there's no animation-duration trick
+// left to rely on for that (see the script below).
 import { galleryImageSrc } from "../lib/site";
 import type { CollectionEntry } from "astro:content";
 
@@ -17,46 +19,11 @@ interface Props {
 }
 const { slides } = Astro.props;
 const n = slides.length;
-const perSlideSeconds = 7;
-const cycleSeconds = Math.max(n, 1) * perSlideSeconds;
-
-// One slide's visible window as a percent of the whole cycle, minus a
-// short crossfade transition at each edge. Capped low (1.5%, ~0.2s on a
-// 14s two-slide cycle) rather than the more typical 3-4% — each slide's
-// caption is baked into the same fading element as its image (see the
-// figcaption below), so a longer overlap window means two captions
-// visibly double-print on top of each other for a beat. Caught this on
-// a mobile screenshot, where the shorter hero leaves no room for that
-// to be legible at all.
-const fadePct = n > 1 ? Math.min(1.5, 100 / n / 3) : 0;
-const windowPct = 100 / Math.max(n, 1);
-const holdEndPct = Math.max(windowPct - fadePct, 0);
-
-const keyframes = `
-@keyframes hero-rotator-fade {
-  0% { opacity: 0; }
-  ${fadePct.toFixed(2)}% { opacity: 1; }
-  ${holdEndPct.toFixed(2)}% { opacity: 1; }
-  ${windowPct.toFixed(2)}% { opacity: 0; }
-  100% { opacity: 0; }
-}
-@keyframes hero-rotator-dot-fade {
-  0% { opacity: 0.4; }
-  ${fadePct.toFixed(2)}% { opacity: 1; }
-  ${holdEndPct.toFixed(2)}% { opacity: 1; }
-  ${windowPct.toFixed(2)}% { opacity: 0.4; }
-  100% { opacity: 0.4; }
-}
-`;
 ---
 {n > 0 && (
-  <div class="hero-rotator">
-    <style set:html={keyframes} />
+  <div class="hero-rotator" data-hero-rotator data-count={n}>
     {slides.map((slide, i) => (
-      <figure
-        class="hero-slide"
-        style={`animation-duration:${cycleSeconds}s; animation-delay:${-(i * perSlideSeconds)}s`}
-      >
+      <figure class="hero-slide" class:list={{ "is-active": i === 0 }} data-index={i}>
         <img src={galleryImageSrc(slide.data.image)} alt={slide.data.caption ?? "From the collection"} loading={i === 0 ? "eager" : "lazy"} />
         <figcaption>
           <div class="wrap">
@@ -67,11 +34,69 @@ const keyframes = `
       </figure>
     ))}
     {n > 1 && (
-      <div class="hero-rotator-dots" aria-hidden="true">
-        {slides.map((_, i) => (
-          <span style={`animation-duration:${cycleSeconds}s; animation-delay:${-(i * perSlideSeconds)}s`}></span>
+      <div class="hero-rotator-dots">
+        {slides.map((slide, i) => (
+          <button
+            type="button"
+            class="hero-dot"
+            class:list={{ "is-active": i === 0 }}
+            data-index={i}
+            aria-label={`Show slide ${i + 1}${slide.data.caption ? `: ${slide.data.caption}` : ""}`}
+            aria-current={i === 0 ? "true" : "false"}
+          ></button>
         ))}
       </div>
     )}
   </div>
+)}
+{n > 1 && (
+  <script is:inline>
+    (function () {
+      var roots = document.querySelectorAll("[data-hero-rotator]");
+      roots.forEach(function (root) {
+        var slides = Array.prototype.slice.call(root.querySelectorAll(".hero-slide"));
+        var dots = Array.prototype.slice.call(root.querySelectorAll(".hero-dot"));
+        var current = 0;
+        var timer = null;
+        var AUTOPLAY_MS = 7000;
+        var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        function show(index) {
+          current = (index + slides.length) % slides.length;
+          slides.forEach(function (slide, i) {
+            slide.classList.toggle("is-active", i === current);
+          });
+          dots.forEach(function (dot, i) {
+            var active = i === current;
+            dot.classList.toggle("is-active", active);
+            dot.setAttribute("aria-current", active ? "true" : "false");
+          });
+        }
+
+        function stop() {
+          if (timer) {
+            clearInterval(timer);
+            timer = null;
+          }
+        }
+
+        function start() {
+          if (reduceMotion) return;
+          stop();
+          timer = setInterval(function () {
+            show(current + 1);
+          }, AUTOPLAY_MS);
+        }
+
+        dots.forEach(function (dot, i) {
+          dot.addEventListener("click", function () {
+            show(i);
+            start(); // restart the autoplay clock from a manual jump
+          });
+        });
+
+        start();
+      });
+    })();
+  </script>
 )}

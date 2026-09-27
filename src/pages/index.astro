@@ -20,7 +20,15 @@ const podcasts = await getCollection("podcasts");
 const latestPodcast = podcasts.sort((a, b) => b.data.publishDate.localeCompare(a.data.publishDate))[0] ?? null;
 
 const feed = await getRankedFeed();
-const featuredGame = feed.find((g) => g.rank === 1) ?? feed[0] ?? null;
+// Hand-picked override, not "always show #1" — Andy's call, 2026-09-27:
+// "For Featured Ranked Game, I'd like to highlight Starfield." Starfield
+// is currently rank #2 (see ranking.yaml in the Ranked Games repo), well
+// within the top-5 this feed already returns, so this needed no change
+// on that repo's side — just picking a different entry out of the same
+// feed here. Falls back to rank #1 / the first entry if the id above
+// ever isn't present in the feed (e.g. it drops out of the top 5).
+const FEATURED_GAME_ID = "starfield";
+const featuredGame = feed.find((g) => g.id === FEATURED_GAME_ID) ?? feed.find((g) => g.rank === 1) ?? feed[0] ?? null;
 const climbing = feed.slice(0, 5);
 
 const activity = getActivity().slice(0, 4);
