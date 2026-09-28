@@ -1,0 +1,30 @@
+---
+// "Other" hub — nav-parity pass, 2026-09-28. This page itself is now
+// built here, but its two sub-pages (Images, the /other/ranked-games/
+// stub) are untouched and still live on WordPress at their existing
+// URLs — only the hub's own look changed, to match the rest of the
+// site and carry the dropdown Andy asked to keep working.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+<BaseLayout title="Other" description="A few other corners of Death By Backlog.">
+  <main class="wrap simple-page">
+    <h1>Other</h1>
+    <p>just putting stuff here</p>
+    <nav class="subpage-links" aria-label="Other pages">
+      <a href="https://deathbybacklog.com/other/images/">
+        <span class="label-block">
+          Images
+          <span class="desc">The full Collection Gallery — every photo.</span>
+        </span>
+        <span class="arrow">→</span>
+      </a>
+      <a href="https://deathbybacklog.com/other/ranked-games/">
+        <span class="label-block">
+          Ranked Games
+          <span class="desc">See the current live version at /ranked-games.</span>
+        </span>
+        <span class="arrow">→</span>
+      </a>
+    </nav>
+  </main>
+</BaseLayout>

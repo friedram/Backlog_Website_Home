@@ -166,6 +166,72 @@ a:hover { color: #f2c869; }
 .site-nav a[aria-current="page"] { color: var(--gold); }
 
 /*
+  Nav items with a sub-page dropdown (Other, Users) — mirrors the old
+  WordPress nav's own split between "the label is a real link to the
+  hub page" and "a separate small toggle opens the list of sub-pages,"
+  rather than collapsing both into one control. Opens on hover/focus
+  for desktop (no JS needed there) and on click via .is-open for touch,
+  toggled by the small inline script in BaseLayout.astro.
+*/
+.nav-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.submenu-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--ink-3);
+  cursor: pointer;
+  transition: color var(--fast) var(--ease), transform var(--fast) var(--ease);
+}
+.submenu-toggle:hover { color: var(--gold); }
+.submenu-toggle svg { width: 11px; height: 11px; display: block; }
+.nav-item.is-open .submenu-toggle,
+.nav-item:hover .submenu-toggle,
+.nav-item:focus-within .submenu-toggle { color: var(--gold); }
+.nav-item.is-open .submenu-toggle svg,
+.nav-item:hover .submenu-toggle svg,
+.nav-item:focus-within .submenu-toggle svg { transform: rotate(180deg); }
+.submenu {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 0;
+  min-width: 170px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  box-shadow: 0 16px 32px -12px rgba(0,0,0,0.45);
+  z-index: 30;
+}
+.nav-item:hover .submenu,
+.nav-item:focus-within .submenu,
+.nav-item.is-open .submenu { display: flex; }
+.submenu a {
+  display: block;
+  padding: 8px 10px;
+  border-radius: 6px;
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.submenu a:hover { background: var(--bg-elevated-2); }
+
+/*
   Icon-swap via CSS, no re-render — both icons are always in the DOM,
   [data-theme] on <html> decides which is visible. This means the
   toggle's appearance updates the instant the attribute flips, with
@@ -666,6 +732,100 @@ a:hover { color: #f2c869; }
   .expansion-item { flex-direction: column; }
   .expansion-item img.expansion-image { width: 100%; max-width: 200px; }
 }
+
+/* ---------- simple content pages (About, Other, Users, Podcasts) ---------- */
+
+.simple-page {
+  padding-block: 48px 72px;
+  max-width: 46rem;
+}
+.simple-page h1 {
+  font-size: clamp(2rem, 4vw, 2.6rem);
+  margin-bottom: 24px;
+}
+.simple-page .lede {
+  font-size: 1.15rem;
+  color: var(--ink);
+}
+.simple-page p {
+  color: var(--ink-2);
+  max-width: 42rem;
+}
+.simple-page p + p { margin-top: 16px; }
+
+.subpage-links {
+  margin-top: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.subpage-links a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  border: 1px solid var(--rule);
+  background: var(--bg-elevated);
+  color: var(--ink);
+  text-decoration: none;
+  font-family: var(--display);
+  font-weight: 700;
+  transition: background var(--fast) var(--ease), border-color var(--fast) var(--ease), transform var(--fast) var(--ease);
+}
+.subpage-links a:hover {
+  background: var(--bg-elevated-2);
+  border-color: var(--rule-strong);
+  transform: translateX(2px);
+}
+.subpage-links a .arrow { color: var(--gold); font-family: var(--mono); }
+.subpage-links a .desc {
+  display: block;
+  font-family: var(--body);
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: var(--ink-3);
+  margin-top: 4px;
+}
+.subpage-links a .label-block { display: flex; flex-direction: column; }
+
+.podcast-list {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.podcast-card {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid var(--rule);
+  background: var(--bg-elevated);
+  text-decoration: none;
+  color: inherit;
+  transition: background var(--fast) var(--ease), border-color var(--fast) var(--ease), transform var(--fast) var(--ease);
+}
+.podcast-card:hover {
+  background: var(--bg-elevated-2);
+  border-color: var(--rule-strong);
+  transform: translateX(2px);
+}
+.podcast-card img {
+  width: 88px;
+  height: 88px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--bg-elevated-2);
+}
+.podcast-card .info { flex: 1; min-width: 0; }
+.podcast-card .info h3 { font-size: 1.15rem; color: var(--ink); }
+.podcast-card .info .meta { font-family: var(--mono); font-size: 0.78rem; color: var(--ink-3); margin-top: 4px; }
+.podcast-card .info .summary { font-size: 0.95rem; color: var(--ink-2); margin-top: 8px; }
+.podcast-card .listen { font-family: var(--display); font-weight: 700; font-size: 0.85rem; color: var(--gold); white-space: nowrap; }
 
 /* ---------- footer ---------- */
 

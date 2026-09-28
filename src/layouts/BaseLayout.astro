@@ -73,12 +73,29 @@ const { title, description = "The games worth talking about right now, ranked by
       <div class="wrap site-nav-row">
         <nav class="site-nav" aria-label="Death By Backlog">
           <a href={withBase("/")} aria-current={title === "Home" ? "page" : undefined}>Home</a>
-          <a href="https://deathbybacklog.com/podcasts/">Podcasts</a>
+          <a href={withBase("/podcasts/")} aria-current={title === "Podcasts" ? "page" : undefined}>Podcasts</a>
           <a href="https://deathbybacklog.com/ranked-games">Ranked Games</a>
           <a href="https://deathbybacklog.com/idatxbox/">ID@Xbox</a>
-          <a href="https://deathbybacklog.com/about/">About</a>
-          <a href="https://deathbybacklog.com/other/">Other</a>
-          <a href="https://deathbybacklog.com/users/">Users</a>
+          <a href={withBase("/about/")} aria-current={title === "About" ? "page" : undefined}>About</a>
+          <div class="nav-item has-submenu">
+            <a href={withBase("/other/")} aria-current={title === "Other" ? "page" : undefined}>Other</a>
+            <button class="submenu-toggle" type="button" aria-label="Other submenu" aria-expanded="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+            </button>
+            <ul class="submenu">
+              <li><a href="https://deathbybacklog.com/other/images/">Images</a></li>
+              <li><a href="https://deathbybacklog.com/other/ranked-games/">Ranked Games</a></li>
+            </ul>
+          </div>
+          <div class="nav-item has-submenu">
+            <a href={withBase("/users/")} aria-current={title === "Users" ? "page" : undefined}>Users</a>
+            <button class="submenu-toggle" type="button" aria-label="Users submenu" aria-expanded="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+            </button>
+            <ul class="submenu">
+              <li><a href="https://deathbybacklog.com/users/gruffygrey/">GruffyGrey</a></li>
+            </ul>
+          </div>
         </nav>
       </div>
     </header>
@@ -108,6 +125,41 @@ const { title, description = "The games worth talking about right now, ranked by
           } catch (e) {
             /* no localStorage available — theme still works for this page view */
           }
+        });
+      })();
+    </script>
+    <script is:inline>
+      (function () {
+        // Hover/focus already opens a submenu via CSS on devices that
+        // have a real hover state; this just adds click-to-toggle for
+        // touch, where there's no hover to rely on. Closes on outside
+        // click and on Escape, and only one submenu open at a time.
+        var items = document.querySelectorAll(".nav-item.has-submenu");
+        function closeAll(except) {
+          items.forEach(function (item) {
+            if (item !== except) {
+              item.classList.remove("is-open");
+              var btn = item.querySelector(".submenu-toggle");
+              if (btn) btn.setAttribute("aria-expanded", "false");
+            }
+          });
+        }
+        items.forEach(function (item) {
+          var btn = item.querySelector(".submenu-toggle");
+          if (!btn) return;
+          btn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            var isOpen = item.classList.contains("is-open");
+            closeAll(item);
+            item.classList.toggle("is-open", !isOpen);
+            btn.setAttribute("aria-expanded", String(!isOpen));
+          });
+        });
+        document.addEventListener("click", function () {
+          closeAll(null);
+        });
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") closeAll(null);
         });
       })();
     </script>

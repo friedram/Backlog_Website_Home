@@ -1,0 +1,22 @@
+---
+// "Users" hub — nav-parity pass, 2026-09-28. Same approach as Other:
+// this hub page is rebuilt here, but individual profile pages (just
+// GruffyGrey for now) stay on WordPress, untouched, at their existing
+// URLs.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+<BaseLayout title="Users" description="Other people writing about their backlogs.">
+  <main class="wrap simple-page">
+    <h1>Users</h1>
+    <p>find users here</p>
+    <nav class="subpage-links" aria-label="User profiles">
+      <a href="https://deathbybacklog.com/users/gruffygrey/">
+        <span class="label-block">
+          GruffyGrey
+          <span class="desc">Books/series I like.</span>
+        </span>
+        <span class="arrow">→</span>
+      </a>
+    </nav>
+  </main>
+</BaseLayout>

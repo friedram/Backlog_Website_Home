@@ -1,0 +1,33 @@
+---
+// Podcasts index — lists every entry in the podcasts collection (same
+// collection Home's "Latest Podcast" tile already reads from), newest
+// first. Nav-parity pass, 2026-09-28: previously this nav item pointed
+// straight at the WordPress page; now it's this repo's own page.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import { withBase } from "../../lib/site";
+
+const episodes = (await getCollection("podcasts")).sort((a, b) =>
+  b.data.publishDate.localeCompare(a.data.publishDate)
+);
+---
+<BaseLayout title="Podcasts" description="Every episode of the Backlog Podcast.">
+  <main class="wrap simple-page">
+    <h1>Podcasts</h1>
+    <div class="podcast-list">
+      {episodes.map((ep) => (
+        <a class="podcast-card" href={ep.data.listenUrl} target="_blank" rel="noopener">
+          {ep.data.coverImage && (
+            <img src={withBase(`/images/podcasts/${ep.data.coverImage}`)} alt="" />
+          )}
+          <div class="info">
+            <h3>{ep.data.title}</h3>
+            <div class="meta">{ep.data.publishDate}</div>
+            {ep.data.summary && <div class="summary">{ep.data.summary}</div>}
+          </div>
+          <span class="listen">Listen →</span>
+        </a>
+      ))}
+    </div>
+  </main>
+</BaseLayout>
