@@ -26,4 +26,4 @@ jobs:
           password: ${{ secrets.HOSTINGER_SFTP_PASSWORD }}
           protocol: ftps
           local-dir: ./dist/
-          server-dir: /domains/deathbybacklog.com/public_html/home-preview/
+          server-dir: /domains/deathbybacklog.com/public_html/deploy-test/
