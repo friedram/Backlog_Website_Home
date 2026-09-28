@@ -1,14 +1,15 @@
 import { defineConfig } from "astro/config";
 
-// Deployed the same way Ranked Games is: a subfolder of the existing
-// deathbybacklog.com WordPress site, over the same GitHub Actions ->
-// Hostinger FTPS pipeline. This lives at /home-preview/ for now, on
-// purpose — it's a review copy, not the live homepage. WordPress still
-// owns "/" while this is being built out. Promoting this to the real
-// domain root later (base: "/") is a deliberate, separate step once
-// it's approved — a config + deploy-target change, not a rebuild.
+// Promoted to the real domain root on 2026-09-28. Previously lived at
+// /home-preview/ as a review copy while WordPress still owned "/" — see
+// git history for that version. WordPress's other pages (About, Podcasts,
+// Other/Images, Users, ID@Xbox) are untouched and keep working exactly
+// as before; only "/" itself now resolves to this build, via one small
+// addition to the shared .htaccess (see architecture-migration-plan.md).
+// The pre-promotion homepage is preserved as a frozen static snapshot at
+// deathbybacklog.com/old-home/, completely independent of this repo.
 export default defineConfig({
   output: "static",
   site: "https://deathbybacklog.com",
-  base: "/home-preview",
+  base: "/",
 });
