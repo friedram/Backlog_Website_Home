@@ -8,7 +8,14 @@ const podcasts = defineCollection({
   loader: glob({ pattern: "*.md", base: "./src/content/podcasts" }),
   schema: z.object({
     title: z.string(),
-    publishDate: z.string(), // YYYY-MM-DD, shown as-is
+    episodeNumber: z.number(), // sort key — the feed is ordered by this, highest first
+    // YYYY-MM-DD, shown as-is. Optional: Audiomack's own "Release Date" field
+    // turned out to reflect whenever a file was last re-uploaded, not when an
+    // episode actually aired (confirmed wrong for at least one older episode),
+    // so it's only set here when the real air date is known — from the
+    // episode's own title, or told to us directly. Left blank rather than
+    // guessing for the rest.
+    publishDate: z.string().optional(),
     listenUrl: z.string().url(),
     coverImage: z.string().optional(), // filename under public/images/podcasts/
     summary: z.string().optional(),

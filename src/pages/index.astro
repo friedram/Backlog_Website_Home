@@ -17,7 +17,10 @@ const heroSlides = gallery.filter((g) => g.data.hero);
 const featuredImage = gallery.find((g) => g.data.featured) ?? gallery[0] ?? null;
 
 const podcasts = await getCollection("podcasts");
-const latestPodcast = podcasts.sort((a, b) => b.data.publishDate.localeCompare(a.data.publishDate))[0] ?? null;
+// Sorted by episodeNumber, not publishDate — see content.config.ts for why
+// publishDate can't be trusted as a sort key (Audiomack's per-episode
+// "Release Date" reflects re-upload time, not air date).
+const latestPodcast = podcasts.sort((a, b) => b.data.episodeNumber - a.data.episodeNumber)[0] ?? null;
 
 const feed = await getRankedFeed();
 // Hand-picked override, not "always show #1" — Andy's call, 2026-09-27:

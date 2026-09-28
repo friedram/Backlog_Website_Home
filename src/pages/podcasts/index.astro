@@ -1,14 +1,19 @@
 ---
 // Podcasts index — lists every entry in the podcasts collection (same
-// collection Home's "Latest Podcast" tile already reads from), newest
-// first. Nav-parity pass, 2026-09-28: previously this nav item pointed
-// straight at the WordPress page; now it's this repo's own page.
+// collection Home's "Latest Podcast" tile already reads from). Sorted by
+// episodeNumber, highest first — NOT by publishDate. Audiomack's own
+// "Release Date" per-episode metadata turned out to reflect whenever a
+// file was last re-uploaded rather than when an episode actually aired
+// (confirmed wrong on at least one older episode), so it can't be trusted
+// as a sort key; episode number is the one thing we know is reliable.
+// Full back-catalog (all 44 episodes, 0–43) added 2026-09-28 from
+// https://audiomack.com/backlog-podcast/songs.
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 import { withBase } from "../../lib/site";
 
-const episodes = (await getCollection("podcasts")).sort((a, b) =>
-  b.data.publishDate.localeCompare(a.data.publishDate)
+const episodes = (await getCollection("podcasts")).sort(
+  (a, b) => b.data.episodeNumber - a.data.episodeNumber
 );
 ---
 <BaseLayout title="Podcasts" description="Every episode of the Backlog Podcast.">
@@ -22,7 +27,7 @@ const episodes = (await getCollection("podcasts")).sort((a, b) =>
           )}
           <div class="info">
             <h3>{ep.data.title}</h3>
-            <div class="meta">{ep.data.publishDate}</div>
+            {ep.data.publishDate && <div class="meta">{ep.data.publishDate}</div>}
             {ep.data.summary && <div class="summary">{ep.data.summary}</div>}
           </div>
           <span class="listen">Listen →</span>
