@@ -230,6 +230,59 @@ a:hover { color: #f2c869; }
   white-space: nowrap;
 }
 .submenu a:hover { background: var(--bg-elevated-2); }
+/*
+  Hover bridge. The dropdown sits 12px below its nav item, and that gap
+  belongs to neither element, so the pointer "left" the nav item while
+  crossing it and the menu closed before a link could be clicked. This
+  invisible strip fills the gap (it is part of the submenu, which is
+  inside .nav-item), so :hover holds all the way down.
+*/
+.submenu::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -13px;
+  height: 13px;
+}
+/* A sub-page that is listed but has no page to link to yet. */
+.submenu .submenu-soon {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 8px 10px;
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--ink-3);
+  cursor: default;
+}
+.status-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--rule-strong);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.status-pill.is-dev { color: var(--gold); border-color: var(--gold); }
+/*
+  Narrow screens: a dropdown anchored to its own nav item runs off the
+  right edge (Users sits near it). Anchor it to the whole nav row
+  instead, so it opens full-left under the nav and always fits.
+*/
+@media (max-width: 640px) {
+  .site-nav { position: relative; }
+  .nav-item { position: static; }
+  .submenu { top: calc(100% + 8px); left: 0; max-width: 100%; }
+}
 
 /*
   Icon-swap via CSS, no re-render — both icons are always in the DOM,
@@ -759,7 +812,8 @@ a:hover { color: #f2c869; }
   flex-direction: column;
   gap: 10px;
 }
-.subpage-links a {
+.subpage-links a,
+.subpage-links .soon {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -788,7 +842,17 @@ a:hover { color: #f2c869; }
   color: var(--ink-3);
   margin-top: 4px;
 }
-.subpage-links a .label-block { display: flex; flex-direction: column; }
+.subpage-links a .label-block,
+.subpage-links .soon .label-block { display: flex; flex-direction: column; }
+.subpage-links .soon { cursor: default; border-style: dashed; color: var(--ink-2); }
+.subpage-links .soon .desc {
+  display: block;
+  font-family: var(--body);
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: var(--ink-3);
+  margin-top: 4px;
+}
 
 .podcast-list {
   margin-top: 32px;
