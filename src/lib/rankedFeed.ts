@@ -22,6 +22,13 @@ export interface FeedGame {
   title: string;
   rank: number;
   previousRank: number | null;
+  // Added 2026-10-09: how the game's place changed (see the Ranked Games
+  // repo's src/lib/ranking.ts). Optional so an older feed still works.
+  movement?: {
+    kind: "new" | "up" | "down" | "shifted" | "same";
+    previousRank: number | null;
+    note: string | null;
+  } | null;
   boxArtUrl: string;
   platform: string[];
   releaseYear: number;

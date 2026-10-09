@@ -21,6 +21,6 @@ const { game } = Astro.props;
     <p class="meta">{game.platform.join(", ")} · {game.releaseYear} · {game.genre.join(", ")}</p>
   </div>
   <div class="side">
-    <RankBadge rank={game.rank} previousRank={game.previousRank} />
+    <RankBadge rank={game.rank} previousRank={game.previousRank} movement={game.movement ?? null} />
   </div>
 </a>

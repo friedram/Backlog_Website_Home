@@ -1,29 +1,45 @@
 ---
-// Turns rank + previousRank into a visually obvious movement pill.
-// Copied verbatim from the Ranked Games repo (src/components/RankBadge.astro)
-// as part of sharing its design system — this component only ever takes
-// plain numbers, so it works unmodified against the JSON feed here too.
+// Copied from the Ranked Games repo (src/components/RankBadge.astro).
+// Takes plain values, so it works against the JSON feed here too.
+// The movement pill, plus (when the number changed) a small line saying
+// where the game was and for how long: "Previously #10 for 5 weeks".
+//
+// Pass `movement` (from src/lib/ranking.ts) to get the full behaviour:
+//   up / down  only for games you actually moved            ▲ 35 / ▼ 33
+//   shifted    number changed only because other games moved around it.
+//              Not a rise or a fall, so no arrow: "#15 → #16"
+//   same       NO CHANGE
+//   new        NEW
+// Without `movement` it falls back to comparing the two numbers.
+interface Movement {
+  kind: "new" | "up" | "down" | "shifted" | "same";
+  previousRank: number | null;
+  note: string | null;
+}
 interface Props {
   rank: number;
   previousRank: number | null;
+  movement?: Movement | null;
+  align?: "start" | "end";
 }
-const { rank, previousRank } = Astro.props;
+const { rank, previousRank, movement = null, align = "end" } = Astro.props;
 
-let label = "—";
-let direction: "up" | "down" | "new" | "same" = "same";
+let kind: Movement["kind"];
+if (movement) kind = movement.kind;
+else if (previousRank === null) kind = "new";
+else if (rank < previousRank) kind = "up";
+else if (rank > previousRank) kind = "down";
+else kind = "same";
+const prev = movement ? movement.previousRank : previousRank;
 
-if (previousRank === null) {
-  label = "NEW";
-  direction = "new";
-} else if (rank < previousRank) {
-  label = `▲ ${previousRank - rank}`;
-  direction = "up";
-} else if (rank > previousRank) {
-  label = `▼ ${rank - previousRank}`;
-  direction = "down";
-} else {
-  label = "NO CHANGE";
-  direction = "same";
-}
+let label = "NO CHANGE";
+if (kind === "new") label = "NEW";
+else if (kind === "up") label = `▲ ${(prev ?? rank) - rank}`;
+else if (kind === "down") label = `▼ ${rank - (prev ?? rank)}`;
+else if (kind === "shifted") label = `#${prev} → #${rank}`;
+const note = movement?.note ?? null;
 ---
-<span class:list={["movement-pill", direction]}>{label}</span>
+<span class:list={["movement-wrap", align === "start" && "align-start"]}>
+  <span class:list={["movement-pill", kind]}>{label}</span>
+  {note && <span class="movement-note">{note}</span>}
+</span>
