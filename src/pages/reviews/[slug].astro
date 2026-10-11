@@ -31,7 +31,7 @@ const hasVerdict = d.pros || d.cons || d.recommendation || d.runtime;
       </div>
     </header>
 
-    <figure class="review-hero">
+    <figure class={`review-hero is-${d.heroShape}`}>
       <img src={withBase(`/images/reviews/${review.id}/${d.heroImage}`)} alt={d.heroAlt} />
     </figure>
 

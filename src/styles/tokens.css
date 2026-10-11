@@ -946,7 +946,9 @@ a:hover { color: #f2c869; }
   transition: border-color var(--fast) var(--ease), transform var(--slow) var(--ease);
 }
 .review-feature:hover { border-color: var(--gold-dim); transform: translateY(-2px); }
-.review-feature .art { background: var(--bg-elevated-2); overflow: hidden; }
+.review-feature .art { position: relative; min-height: 340px; background: var(--bg-elevated-2); overflow: hidden; }
+/* The text column sets the card height; the art fills it, whatever its shape. */
+.review-feature .art img { position: absolute; inset: 0; }
 .review-feature .art img {
   width: 100%; height: 100%; object-fit: cover; display: block;
   transition: transform var(--slow) var(--ease);
@@ -1011,6 +1013,17 @@ a:hover { color: #f2c869; }
   border: 1px solid var(--rule);
   box-shadow: 0 30px 60px -30px var(--gold-glow);
 }
+
+/* Tall key art (heroShape: portrait): natural size, centered, capped height. */
+.review-hero.is-portrait img {
+  width: auto;
+  max-width: 100%;
+  max-height: min(80vh, 760px);
+  margin-inline: auto;
+}
+/* Posters keep their title (usually at the top) when cropped into a card. */
+.review-feature .art.is-portrait img,
+.review-card .art.is-portrait img { object-position: center top; }
 
 .review-body { max-width: 46rem; margin-top: 40px; }
 .review-body p { font-size: 1.12rem; line-height: 1.7; color: var(--ink-2); }

@@ -65,13 +65,12 @@ const reviews = defineCollection({
   schema: z.object({
     headline: z.string(), // the review's own title, e.g. "Bullet Heckin'"
     game: z.string(), // the game's name, e.g. "Burst Hero"
-    // The ID@Xbox page shows a "Read our review" link under any game whose
-    // name matches `game` (see src/pages/reviews/links.json.ts). Only set
-    // this when the ID@Xbox listing spells the game differently.
-    idxboxName: z.string().optional(),
     intro: z.string(), // the opening line(s), shown above the key art
     heroImage: z.string(), // filename under public/images/reviews/<slug>/
     heroAlt: z.string().default(""),
+    // "portrait" for tall key art (a poster or box cover), so it's shown
+    // at a sensible height instead of stretched to the full page width.
+    heroShape: z.enum(["landscape", "portrait"]).default("landscape"),
     publishDate: z.string(), // YYYY-MM-DD; the Reviews page sorts newest first
     author: z.string().optional(),
     // Platform rule (CONVENTIONS.md): PC and Xbox only, unless the game

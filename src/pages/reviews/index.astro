@@ -21,7 +21,7 @@ const img = (r: (typeof reviews)[number]) => withBase(`/images/reviews/${r.id}/$
 
     {latest && (
       <a class="review-feature" href={withBase(`/reviews/${latest.id}/`)}>
-        <div class="art"><img src={img(latest)} alt={latest.data.heroAlt} /></div>
+        <div class={`art is-${latest.data.heroShape}`}><img src={img(latest)} alt={latest.data.heroAlt} /></div>
         <div class="body">
           <span class="kicker">Latest review · {latest.data.game}</span>
           <h2>{latest.data.headline}</h2>
@@ -38,7 +38,7 @@ const img = (r: (typeof reviews)[number]) => withBase(`/images/reviews/${r.id}/$
       <div class="review-grid">
         {rest.map((r) => (
           <a class="review-card" href={withBase(`/reviews/${r.id}/`)}>
-            <div class="art"><img src={img(r)} alt={r.data.heroAlt} loading="lazy" /></div>
+            <div class={`art is-${r.data.heroShape}`}><img src={img(r)} alt={r.data.heroAlt} loading="lazy" /></div>
             <span class="kicker">{r.data.game}</span>
             <h3>{r.data.headline}</h3>
             <span class="meta">{formatReviewDate(r.data.publishDate)}</span>
