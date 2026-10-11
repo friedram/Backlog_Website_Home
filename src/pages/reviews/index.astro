@@ -1,0 +1,50 @@
+---
+// Reviews hub (added 2026-10-10). Lists every published review, newest
+// first. The newest one gets the big feature card; the rest sit in a grid.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { withBase } from "../../lib/site";
+import { getReviews, formatReviewDate } from "../../lib/reviews";
+
+const reviews = await getReviews();
+const [latest, ...rest] = reviews;
+const img = (r: (typeof reviews)[number]) => withBase(`/images/reviews/${r.id}/${r.data.heroImage}`);
+---
+<BaseLayout title="Reviews" description="Death By Backlog game reviews.">
+  <main class="wrap reviews-page">
+    <header class="reviews-head">
+      <span class="kicker">Death By Backlog</span>
+      <h1>Reviews</h1>
+      <p class="lede">What we played, what we thought, and whether it's worth your time.</p>
+    </header>
+
+    {!latest && <p class="reviews-empty">No reviews yet.</p>}
+
+    {latest && (
+      <a class="review-feature" href={withBase(`/reviews/${latest.id}/`)}>
+        <div class="art"><img src={img(latest)} alt={latest.data.heroAlt} /></div>
+        <div class="body">
+          <span class="kicker">Latest review · {latest.data.game}</span>
+          <h2>{latest.data.headline}</h2>
+          <p class="intro">{latest.data.intro}</p>
+          {latest.data.recommendation && (
+            <p class="verdict-line"><span>Verdict</span> {latest.data.recommendation}</p>
+          )}
+          <span class="meta">{formatReviewDate(latest.data.publishDate)}{latest.data.author && ` · ${latest.data.author}`}</span>
+        </div>
+      </a>
+    )}
+
+    {rest.length > 0 && (
+      <div class="review-grid">
+        {rest.map((r) => (
+          <a class="review-card" href={withBase(`/reviews/${r.id}/`)}>
+            <div class="art"><img src={img(r)} alt={r.data.heroAlt} loading="lazy" /></div>
+            <span class="kicker">{r.data.game}</span>
+            <h3>{r.data.headline}</h3>
+            <span class="meta">{formatReviewDate(r.data.publishDate)}</span>
+          </a>
+        ))}
+      </div>
+    )}
+  </main>
+</BaseLayout>

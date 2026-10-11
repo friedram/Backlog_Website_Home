@@ -1,0 +1,80 @@
+---
+// One review: headline and intro, then the key art (the "...in our
+// review of" reveal), the review text, then the verdict panel.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { render } from "astro:content";
+import { withBase } from "../../lib/site";
+import { getReviews, formatReviewDate, youtubeEmbed } from "../../lib/reviews";
+
+export async function getStaticPaths() {
+  const reviews = await getReviews();
+  return reviews.map((review) => ({ params: { slug: review.id }, props: { review } }));
+}
+
+const { review } = Astro.props;
+const d = review.data;
+const { Content } = await render(review);
+const video = youtubeEmbed(d.youtubeUrl);
+const hasVerdict = d.pros || d.cons || d.recommendation || d.runtime;
+---
+<BaseLayout title={`${d.game} review: ${d.headline}`} description={d.intro}>
+  <main class="review-article">
+    <header class="wrap review-header">
+      <a class="back" href={withBase("/reviews/")}>← All reviews</a>
+      <span class="kicker">Review · {d.game}</span>
+      <h1>{d.headline}</h1>
+      <p class="review-intro">{d.intro}</p>
+      <div class="review-meta">
+        <span>{formatReviewDate(d.publishDate)}</span>
+        {d.author && <span>By {d.author}</span>}
+        {d.reviewedOn && <span>Reviewed on {d.reviewedOn}</span>}
+      </div>
+    </header>
+
+    <figure class="review-hero">
+      <img src={withBase(`/images/reviews/${review.id}/${d.heroImage}`)} alt={d.heroAlt} />
+    </figure>
+
+    <div class="wrap review-body">
+      <Content />
+    </div>
+
+    {video && (
+      <div class="wrap review-video">
+        <iframe src={video} title={`${d.game} video`} loading="lazy"
+          allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    )}
+
+    {hasVerdict && (
+      <section class="wrap verdict" aria-label="Verdict">
+        {d.recommendation && (
+          <div class="verdict-rec">
+            <span class="label">Recommendation</span>
+            <p>{d.recommendation}</p>
+          </div>
+        )}
+        {(d.pros || d.cons) && (
+          <div class="verdict-split">
+            {d.pros && (
+              <div class="verdict-col pros">
+                <span class="label">▲ Pros</span>
+                <p>{d.pros}</p>
+              </div>
+            )}
+            {d.cons && (
+              <div class="verdict-col cons">
+                <span class="label">▼ Cons</span>
+                <p>{d.cons}</p>
+              </div>
+            )}
+          </div>
+        )}
+        <dl class="verdict-facts">
+          {d.runtime && (<div><dt>Runtime</dt><dd>{d.runtime}</dd></div>)}
+          {d.platforms.length > 0 && (<div><dt>Platforms</dt><dd>{d.platforms.join(" · ")}</dd></div>)}
+        </dl>
+      </section>
+    )}
+  </main>
+</BaseLayout>

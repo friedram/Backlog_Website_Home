@@ -55,4 +55,32 @@ const gallery = defineCollection({
   }),
 });
 
-export const collections = { podcasts, gallery };
+// Reviews (added 2026-10-10) — one Markdown file per review in
+// src/content/reviews/<slug>.md; the page lives at /reviews/<slug>/.
+// Images go in public/images/reviews/<slug>/. The review text itself is
+// the Markdown body; an in-text picture with a caption is a <figure>
+// block (see burst-hero.md for the exact pattern to copy).
+const reviews = defineCollection({
+  loader: glob({ pattern: "*.md", base: "./src/content/reviews" }),
+  schema: z.object({
+    headline: z.string(), // the review's own title, e.g. "Bullet Heckin'"
+    game: z.string(), // the game's name, e.g. "Burst Hero"
+    intro: z.string(), // the opening line(s), shown above the key art
+    heroImage: z.string(), // filename under public/images/reviews/<slug>/
+    heroAlt: z.string().default(""),
+    publishDate: z.string(), // YYYY-MM-DD; the Reviews page sorts newest first
+    author: z.string().optional(),
+    // Platform rule (CONVENTIONS.md): PC and Xbox only, unless the game
+    // is on neither; never Sony or Nintendo for a PC/Xbox game.
+    platforms: z.array(z.string()).default([]),
+    reviewedOn: z.string().optional(), // e.g. "Xbox Series X|S"
+    pros: z.string().optional(),
+    cons: z.string().optional(),
+    recommendation: z.string().optional(),
+    runtime: z.string().optional(),
+    youtubeUrl: z.string().url().optional(), // a video review, if there is one
+    draft: z.boolean().default(false), // true = built nowhere, listed nowhere
+  }),
+});
+
+export const collections = { podcasts, gallery, reviews };

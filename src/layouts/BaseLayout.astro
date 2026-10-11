@@ -5,7 +5,10 @@
 // carries the FULL confirmed nav order (site-redesign-proposal.md,
 // "Confirmed navigation order," locked 2026-09-24):
 //
-//   Home · Podcasts · Ranked Games · ID@Xbox · About · Other ▾ · Users ▾
+//   Home · Podcasts · Ranked Games · ID@Xbox · About · Other ▾ · Users ▾ · Reviews
+//
+// (Reviews added 2026-10-10. The Ranked Games repo's BaseLayout carries
+// the same list; change both together.)
 //
 // This site is a review deploy at /home-preview/ (see astro.config.mjs)
 // — WordPress still serves the real "/" for now — so "Home" points at
@@ -24,6 +27,7 @@ interface Props {
   description?: string;
 }
 const { title, description = "The games worth talking about right now, ranked by hand." } = Astro.props;
+const isReviews = Astro.url.pathname.startsWith(withBase("/reviews"));
 ---
 <!doctype html>
 <html lang="en">
@@ -102,6 +106,7 @@ const { title, description = "The games worth talking about right now, ranked by
               <li><span class="submenu-soon">Brian <span class="status-pill">Pending</span></span></li>
             </ul>
           </div>
+          <a href={withBase("/reviews/")} aria-current={isReviews ? "page" : undefined}>Reviews</a>
         </nav>
       </div>
     </header>
