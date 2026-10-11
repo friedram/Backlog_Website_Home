@@ -65,6 +65,10 @@ const reviews = defineCollection({
   schema: z.object({
     headline: z.string(), // the review's own title, e.g. "Bullet Heckin'"
     game: z.string(), // the game's name, e.g. "Burst Hero"
+    // The ID@Xbox page shows a "Read our review" link under any game whose
+    // name matches `game` (see src/pages/reviews/links.json.ts). Only set
+    // this when the ID@Xbox listing spells the game differently.
+    idxboxName: z.string().optional(),
     intro: z.string(), // the opening line(s), shown above the key art
     heroImage: z.string(), // filename under public/images/reviews/<slug>/
     heroAlt: z.string().default(""),
