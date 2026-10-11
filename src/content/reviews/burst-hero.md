@@ -5,6 +5,7 @@ intro: "Rumor has it that video games are supposed to be fun. On that count, I h
 heroImage: "key-art.jpg"
 heroAlt: "Burst Hero key art: a pink-haired gunner with a minigun and a cowboy, surrounded by pixel-art monsters"
 publishDate: "2026-10-10"
+author: "Brian"
 platforms: ["PC", "Xbox One", "Xbox Series X|S"]
 reviewedOn: "Xbox"
 pros: "Charming pixel style, catchy chiptunes soundtrack, zany weapons and a great progression loop. A no-damage level completion was an intense and thrilling challenge that felt satisfying."
