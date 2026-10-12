@@ -11,7 +11,9 @@ export async function getReviews() {
 // "2026-10-10" -> "October 10, 2026". Parsed by hand so the server's
 // time zone can never shift it to the day before.
 export function formatReviewDate(ymd: string): string {
-  const [y, m, d] = ymd.split("-").map(Number);
+  // publishDate may carry a time ("2026-10-11 14:00") to order two reviews
+  // posted the same day; only the date part is shown.
+  const [y, m, d] = ymd.slice(0, 10).split("-").map(Number);
   const months = ["January", "February", "March", "April", "May", "June", "July",
     "August", "September", "October", "November", "December"];
   return m && d ? `${months[m - 1]} ${d}, ${y}` : ymd;

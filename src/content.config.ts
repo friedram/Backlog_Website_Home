@@ -71,7 +71,9 @@ const reviews = defineCollection({
     // "portrait" for tall key art (a poster or box cover), so it's shown
     // at a sensible height instead of stretched to the full page width.
     heroShape: z.enum(["landscape", "portrait"]).default("landscape"),
-    publishDate: z.string(), // YYYY-MM-DD; the Reviews page sorts newest first
+    // YYYY-MM-DD; the Reviews page sorts newest first. Two reviews on the
+    // same day: add a time to order them, e.g. "2026-10-11 14:00".
+    publishDate: z.string(),
     author: z.string().optional(),
     // Platform rule (CONVENTIONS.md): PC and Xbox only, unless the game
     // is on neither; never Sony or Nintendo for a PC/Xbox game.

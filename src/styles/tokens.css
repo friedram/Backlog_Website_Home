@@ -948,7 +948,14 @@ a:hover { color: #f2c869; }
 .review-feature:hover { border-color: var(--gold-dim); transform: translateY(-2px); }
 .review-feature .art { position: relative; min-height: 340px; background: var(--bg-elevated-2); overflow: hidden; }
 /* The text column sets the card height; the art fills it, whatever its shape. */
-.review-feature .art img { position: absolute; inset: 0; }
+/* Whole key art always visible (contain), over a blurred copy of itself,
+   so any shape works: wide logos aren't cropped, posters aren't squashed. */
+.review-feature .art::before {
+  content: ""; position: absolute; inset: -20px;
+  background: var(--art) center / cover no-repeat;
+  filter: blur(18px) brightness(0.6);
+}
+.review-feature .art img { position: absolute; inset: 0; object-fit: contain !important; }
 .review-feature .art img {
   width: 100%; height: 100%; object-fit: cover; display: block;
   transition: transform var(--slow) var(--ease);
