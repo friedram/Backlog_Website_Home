@@ -1018,11 +1018,24 @@ a:hover { color: #f2c869; }
   z-index: 2;
 }
 .scroll-arrow:hover { color: var(--gold); border-color: var(--gold); }
-.scroll-arrow.prev { left: -14px; }
-.scroll-arrow.next { right: -14px; }
+/*
+  2026-11-14 fix: these used to sit just OUTSIDE the row (left/right:
+  -14px). That looks fine on a narrow phone screen where the content
+  column nearly fills the viewport, but on a real desktop monitor the
+  page's reading column is only 736px wide and centered, so "just
+  outside the row" landed the arrow floating alone in a huge empty
+  gutter, nowhere near the cards it controls — reported by Andy as
+  looking completely broken. Fixed by overlapping the arrows onto the
+  row itself (inset from the row's own edge, over the card images),
+  the same pattern most real carousels use, so the arrow is always
+  anchored to content regardless of viewport width.
+*/
+.scroll-arrow.prev { left: 8px; }
+.scroll-arrow.next { right: 8px; }
+.scroll-arrow { box-shadow: 0 4px 14px -4px rgba(0,0,0,0.6); }
 @media (max-width: 640px) {
-  /* Touch scroll already works natively; the floating arrows have no
-     room to sit outside the content column on a narrow viewport. */
+  /* Touch scroll already works natively; skip the overlay arrows on
+     a narrow viewport where they'd cover too much of a small card. */
   .scroll-arrow { display: none; }
 }
 .highlight-grid {
@@ -1053,6 +1066,74 @@ a:hover { color: #f2c869; }
 }
 @media (max-width: 640px) {
   .highlight-grid { grid-template-columns: 1fr; }
+}
+
+/*
+  Xbox 25 page: "Your Origin" section — when Andy joined Xbox, his
+  first console, and his first achievement ever unlocked. Two small
+  stat tiles plus a wider achievement card, reusing the same
+  .hero-eyebrow label treatment as the rest of the page rather than
+  introducing a new label style.
+*/
+.xbox25-origin {
+  margin-top: 40px;
+}
+.xbox25-origin h2 {
+  font-size: clamp(1.4rem, 3vw, 1.8rem);
+}
+.origin-stats {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.origin-stat {
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 18px 20px;
+  background: var(--bg-elevated);
+}
+.origin-stat .hero-eyebrow { display: block; margin-bottom: 8px; }
+.origin-value {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(1.25rem, 3vw, 1.6rem);
+  color: var(--ink);
+}
+.origin-achievement {
+  margin-top: 16px;
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 18px;
+  background: var(--bg-elevated);
+}
+.origin-achievement img {
+  width: 90px;
+  flex: 0 0 auto;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--rule);
+  box-shadow: 0 12px 24px -10px rgba(0,0,0,0.5);
+}
+.origin-achievement-name {
+  font-family: var(--display);
+  font-weight: 900;
+  color: var(--gold);
+  font-size: 1.1rem;
+  margin: 2px 0 4px;
+}
+.origin-achievement-meta {
+  color: var(--ink-3);
+  font-size: 0.88rem;
+  margin: 0;
+}
+@media (max-width: 640px) {
+  .origin-stats { grid-template-columns: 1fr; }
+  .origin-achievement { flex-direction: column; align-items: flex-start; }
 }
 
 .podcast-list {

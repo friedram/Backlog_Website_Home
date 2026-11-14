@@ -18,21 +18,24 @@
 // was the whole point of building this ourselves rather than just
 // linking his real archive.
 //
-// Content status (2026-11-13, updated same day): the #1 most-played
-// game, three "Other Favorites" ranks (5-7), and three category
-// highlights (Highest Gamerscore / Highest Achievements / Most
-// Sessions) are now confirmed, from the two screenshots Andy sent.
-// Ranks 2-4 and 8+, "Your Origin," and total hours/achievement counts
-// are still pending — see the pending-panel below. Do not invent
-// those; replace the pending-panel once he sends them.
+// Content status (2026-11-13, updated 2026-11-14): the #1 most-played
+// game, Your Origin (join date, first console, first achievement),
+// three "Other Favorites" ranks (5-7), and three category highlights
+// (Highest Gamerscore / Highest Achievements / Most Sessions) are now
+// confirmed, from screenshots Andy sent. Ranks 2-4 and 8+ and total
+// hours/achievement counts are still pending — see the pending-panel
+// below. Do not invent those; replace the pending-panel once he sends
+// them.
 //
-// Box art for the three "Other Favorites" games (Rogue Trader, Mass
-// Effect 3, Mass Effect Legendary Edition) is reused from the Ranked
-// Games repo's own game entries, already vetted there. Halo: The
-// Master Chief Collection and Age of Empires: Castle Siege were
-// sourced fresh from Xbox's own store/press assets for this page (the
-// Castle Siege art is a cropped promo screenshot, not box art — that
-// discontinued mobile/XBLA title never had traditional packaging).
+// Box art: every game's art is sourced fresh and independently from
+// Xbox's own store pages / Microsoft Store image CDN, per Andy's
+// explicit "real Xbox art for every game" direction (2026-11-13,
+// confirmed via AskUserQuestion after an initial ambiguous "1:1 copy"
+// request — he does NOT want Xbox's page design/branding/logo cloned,
+// only the box art itself). Age of Empires: Castle Siege is the one
+// exception — a cropped promo screenshot, not box art, since that
+// discontinued mobile/XBLA title has no live store page and never had
+// traditional packaging.
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { withBase } from "../../../lib/site";
 
@@ -107,6 +110,34 @@ const highlights = [
       </div>
     </div>
 
+    <section class="xbox25-origin">
+      <h2>Your Origin</h2>
+      <div class="origin-stats">
+        <div class="origin-stat">
+          <span class="hero-eyebrow">Joined Xbox</span>
+          <div class="origin-value">November 22, 2007</div>
+        </div>
+        <div class="origin-stat">
+          <span class="hero-eyebrow">First console</span>
+          <div class="origin-value">Xbox 360</div>
+        </div>
+      </div>
+      <div class="origin-achievement">
+        <img
+          src={withBase("/images/users/andy/xbox-25/far-cry-instincts-predator.jpg")}
+          alt="Far Cry Instincts Predator box art"
+          loading="lazy"
+        />
+        <div>
+          <span class="hero-eyebrow">First achievement ever unlocked</span>
+          <p class="origin-achievement-name">Head Collector</p>
+          <p class="origin-achievement-meta">
+            Far Cry Instincts Predator · Unlocked December 24, 2007
+          </p>
+        </div>
+      </div>
+    </section>
+
     <section class="xbox25-favorites">
       <h2>Other Favorites</h2>
       <p class="section-note">
@@ -152,10 +183,10 @@ const highlights = [
     <div class="pending-panel">
       <strong>More of this story is on its way.</strong>
       <p>
-        Xbox's archive also covers Andy's origin story, total hours played,
-        and overall achievement counts, plus ranks 2–4 and 8+ of his
-        favorites list. Those land here once that data's been pulled
-        together — nothing here is getting invented in the meantime.
+        Xbox's archive also covers Andy's total hours played and overall
+        achievement count, plus ranks 2–4 and 8+ of his favorites list.
+        Those land here once that data's been pulled together — nothing
+        here is getting invented in the meantime.
       </p>
     </div>
   </main>
