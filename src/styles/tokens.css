@@ -1824,3 +1824,46 @@ a:hover { color: #f2c869; }
 .origin-extra img { max-width: 100%; max-height: 420px; width: auto; height: auto; display: block; border-radius: 12px; }
 .origin-full { margin-top: 24px; display: flex; justify-content: center; }
 .origin-full img { width: 100%; max-width: 640px; height: auto; display: block; border-radius: 12px; }
+
+/* ---------- Original Xbox shelf (users/andy/original-xbox) ---------- */
+.simple-page.ogx-page { max-width: 68rem; }
+.ogx-back { font-family: var(--mono); font-size: 0.8rem; color: var(--ink-2); text-decoration: none; }
+.ogx-back:hover { color: var(--gold); }
+.ogx-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; margin: 28px 0 4px; }
+.ogx-searchlabel { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.ogx-search {
+  flex: 1 1 260px; max-width: 440px;
+  font-family: var(--mono); font-size: 0.9rem; color: var(--ink);
+  padding: 11px 14px; border-radius: 10px;
+  border: 1px solid var(--rule-strong); background: var(--bg-elevated);
+}
+.ogx-search:focus { outline: 2px solid var(--gold); outline-offset: 2px; }
+.ogx-count { font-family: var(--mono); font-size: 0.8rem; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.ogx-group { margin-top: 30px; }
+.ogx-group[hidden], .ogx-card[hidden] { display: none; }
+.ogx-letter {
+  font-family: var(--display); font-weight: 900; font-size: 1.5rem; color: var(--gold);
+  margin: 0 0 14px; padding-bottom: 6px; border-bottom: 1px solid var(--rule);
+}
+.ogx-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 18px 16px; }
+.ogx-card { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.ogx-art { aspect-ratio: 3 / 4; border-radius: 10px; overflow: hidden; background: var(--bg-elevated); border: 1px solid var(--rule); }
+.ogx-art img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform var(--slow) var(--ease); }
+.ogx-card:hover .ogx-art img { transform: scale(1.05); }
+.ogx-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; padding: 14px; background: linear-gradient(160deg, var(--bg-elevated-2), var(--bg-elevated)); }
+.ogx-placeholder span { font-family: var(--display); font-weight: 900; font-size: 1rem; line-height: 1.15; color: var(--ink-2); text-wrap: balance; }
+.ogx-card h3 { font-size: 0.92rem; line-height: 1.25; margin: 0; overflow-wrap: anywhere; }
+.simple-page .ogx-note { font-family: var(--mono); font-size: 0.72rem; color: var(--ink-3); margin: -4px 0 0; }
+.simple-page .ogx-empty { margin-top: 28px; font-family: var(--mono); color: var(--ink-3); }
+.ogx-nextcard {
+  display: flex; flex-direction: column; gap: 6px; margin-top: 40px;
+  padding: 20px 22px; border-radius: 14px; text-decoration: none; color: inherit;
+  background: var(--bg-elevated); border: 1px solid var(--rule-strong);
+  transition: transform var(--fast) var(--ease), border-color var(--fast) var(--ease);
+}
+.ogx-nextcard:hover { transform: translateY(-2px); border-color: var(--gold); }
+.ogx-nextcard strong { font-family: var(--display); font-weight: 900; font-size: 1.35rem; color: var(--ink); }
+.ogx-nextcopy { color: var(--ink-2); }
+@media (max-width: 640px) {
+  .ogx-grid { grid-template-columns: repeat(auto-fill, minmax(136px, 1fr)); gap: 16px 12px; }
+}

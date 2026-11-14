@@ -1,0 +1,113 @@
+---
+// Andy's "Original Xbox" shelf — a sub-page of his Xbox 25 celebration
+// (see users/andy/xbox-25.astro). A plain alphabetical cover wall of the
+// Original Xbox games he owns, with a type-to-filter box.
+//
+// The game list lives in src/lib/andyOriginalXbox.ts. Covers are looked up by
+// id in public/images/users/andy/original-xbox/ (see src/lib/gameArt.ts);
+// any game without a file shows a title card, so the page is never broken.
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { withBase } from "../../../lib/site";
+import { findGameArt } from "../../../lib/gameArt";
+import { originalXboxGames } from "../../../lib/andyOriginalXbox";
+
+const ART_FOLDER = "users/andy/original-xbox";
+
+const sortKey = (t: string) =>
+  t.toLowerCase().replace(/^the\s+/, "").replace(/[^a-z0-9]/g, "");
+
+const games = originalXboxGames
+  .map((g) => ({ ...g, art: findGameArt(ART_FOLDER, g.id) }))
+  .sort((a, b) => sortKey(a.title).localeCompare(sortKey(b.title)));
+
+const letterOf = (t: string) => {
+  const c = sortKey(t).charAt(0).toUpperCase();
+  return /[A-Z]/.test(c) ? c : "#";
+};
+
+const groups: { letter: string; items: typeof games }[] = [];
+for (const g of games) {
+  const l = letterOf(g.title);
+  const last = groups[groups.length - 1];
+  if (last && last.letter === l) last.items.push(g);
+  else groups.push({ letter: l, items: [g] });
+}
+const total = games.length;
+---
+<BaseLayout
+  title="Original Xbox — Andy"
+  description={`${total} Original Xbox games from Andy's own collection, part of his Xbox 25 celebration.`}
+>
+  <main class="wrap simple-page ogx-page">
+    <div class="xbox25-topbar">
+      <span class="kicker">Users · Andy · Xbox 25</span>
+      <a class="ogx-back" href={withBase("/users/andy/xbox-25/")}>← Back to Xbox 25</a>
+    </div>
+    <h1>The Original Xbox Shelf</h1>
+    <p class="lede">
+      {total} games from the green-and-black era, every one from my own
+      collection. Same box-art treatment as the rest of the Xbox 25
+      celebration.
+    </p>
+
+    <div class="ogx-toolbar">
+      <label class="ogx-searchlabel" for="ogx-search">Filter by title</label>
+      <input
+        id="ogx-search"
+        class="ogx-search"
+        type="search"
+        placeholder="Type a game, e.g. splinter, fable, halo"
+        autocomplete="off"
+      />
+      <span class="ogx-count" id="ogx-count" aria-live="polite">{total} games</span>
+    </div>
+
+    {groups.map((grp) => (
+      <section class="ogx-group" data-letter={grp.letter}>
+        <h2 class="ogx-letter">{grp.letter}</h2>
+        <ul class="ogx-grid">
+          {grp.items.map((g) => (
+            <li class="ogx-card" data-title={g.title.toLowerCase()}>
+              <div class="ogx-art">
+                {g.art ? (
+                  <img src={g.art} alt={`${g.title} box art`} loading="lazy" />
+                ) : (
+                  <div class="ogx-placeholder"><span>{g.title}</span></div>
+                )}
+              </div>
+              <h3>{g.title}</h3>
+              {g.note && <p class="ogx-note">{g.note}</p>}
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+    <p class="ogx-empty" id="ogx-empty" hidden>No games match that. Try fewer letters.</p>
+  </main>
+
+  <script is:inline>
+    (function () {
+      var input = document.getElementById("ogx-search");
+      var count = document.getElementById("ogx-count");
+      var empty = document.getElementById("ogx-empty");
+      if (!input) return;
+      var cards = Array.prototype.slice.call(document.querySelectorAll(".ogx-card"));
+      var groups = Array.prototype.slice.call(document.querySelectorAll(".ogx-group"));
+      function apply() {
+        var q = input.value.trim().toLowerCase();
+        var shown = 0;
+        cards.forEach(function (c) {
+          var match = !q || c.getAttribute("data-title").indexOf(q) !== -1;
+          c.hidden = !match;
+          if (match) shown++;
+        });
+        groups.forEach(function (g) {
+          g.hidden = !g.querySelector(".ogx-card:not([hidden])");
+        });
+        count.textContent = q ? shown + " of " + cards.length + " games" : cards.length + " games";
+        empty.hidden = shown !== 0;
+      }
+      input.addEventListener("input", apply);
+    })();
+  </script>
+</BaseLayout>
