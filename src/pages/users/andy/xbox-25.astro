@@ -43,10 +43,19 @@
 // explicit "real Xbox art for every game" direction (2026-11-13,
 // confirmed via AskUserQuestion after an initial ambiguous "1:1 copy"
 // request — he does NOT want Xbox's page design/branding/logo cloned,
-// only the box art itself). Age of Empires: Castle Siege is the one
-// exception — a cropped promo screenshot, not box art, since that
-// discontinued mobile/XBLA title has no live store page and never had
-// traditional packaging.
+// only the box art itself). Age of Empires: Castle Siege and After
+// Burner Climax are the two exceptions — Castle Siege is a cropped
+// promo screenshot (never had traditional packaging), and After Burner
+// Climax (round 9) is cropped directly from Andy's own Playback
+// Archive screenshot, since it's a delisted Xbox Live Arcade title
+// with no live xbox.com store page left to source from. Both are
+// Xbox's own real official art, just not reachable via a live product
+// page fetch.
+//
+// Round 9 also added two "Your Origin" milestones (First Game Played,
+// First Game with 100% Achievements Completed) and corrected two
+// numbers in Your Journey (Console hours, 2026 play time) against
+// Andy's own screenshots — see originMilestones below.
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { withBase } from "../../../lib/site";
 
@@ -100,6 +109,34 @@ const otherFavorites = [
   },
 ];
 
+// "Your Origin" milestones — first game played, first achievement
+// ever unlocked, and first game fully completed (100% achievements),
+// from Andy's own screenshot of that 3-up row. Sits alongside the
+// origin-stats (joined date, first console) in the same section.
+const originMilestones = [
+  {
+    label: "First Game Played",
+    name: "The Orange Box",
+    meta: "November 22, 2007",
+    image: "the-orange-box.jpg",
+    alt: "The Orange Box box art",
+  },
+  {
+    label: "First Achievement Unlocked",
+    name: "Head Collector",
+    meta: "Far Cry Instincts Predator · Unlocked December 24, 2007",
+    image: "far-cry-instincts-predator.jpg",
+    alt: "Far Cry Instincts Predator box art",
+  },
+  {
+    label: "First Game with 100% Achievements Completed",
+    name: "After Burner Climax",
+    meta: "Unlocked May 12, 2010",
+    image: "after-burner-climax.jpg",
+    alt: "After Burner Climax box art",
+  },
+];
+
 // Fallout 76's full stat line + Gamerscore ring, from Andy's "#1 Most
 // Played Game" screenshot.
 const falloutStats = {
@@ -118,12 +155,12 @@ const journeyStats = [
   { label: "Top Genre", value: "Role Playing" },
 ];
 const journeyYears = [
-  { label: "Year With Most Play Time", value: "2026", sub: "2,042h" },
+  { label: "Year With Most Play Time", value: "2026", sub: "2,043h" },
   { label: "Year With Highest Gamerscore", value: "2025", sub: "31,167" },
   { label: "Year With Most Games Played", value: "2025", sub: "234 games" },
 ];
 const wherePlayed = [
-  { label: "Console", hours: 10081 },
+  { label: "Console", hours: 10082 },
   { label: "PC", hours: 2637 },
   { label: "Mobile", hours: 429 },
   { label: "Cloud", hours: 114 },
@@ -279,19 +316,19 @@ const highlights = [
           <div class="origin-value">Xbox 360</div>
         </div>
       </div>
-      <div class="origin-achievement">
-        <img
-          src={withBase("/images/users/andy/xbox-25/far-cry-instincts-predator.jpg")}
-          alt="Far Cry Instincts Predator box art"
-          loading="lazy"
-        />
-        <div>
-          <span class="hero-eyebrow">First achievement ever unlocked</span>
-          <p class="origin-achievement-name">Head Collector</p>
-          <p class="origin-achievement-meta">
-            Far Cry Instincts Predator · Unlocked December 24, 2007
-          </p>
-        </div>
+      <div class="origin-milestones">
+        {originMilestones.map((m) => (
+          <div class="milestone-tile">
+            <span class="hero-eyebrow">{m.label}</span>
+            <img
+              src={withBase(`/images/users/andy/xbox-25/${m.image}`)}
+              alt={m.alt}
+              loading="lazy"
+            />
+            <p class="milestone-name">{m.name}</p>
+            <p class="milestone-meta">{m.meta}</p>
+          </div>
+        ))}
       </div>
     </section>
 

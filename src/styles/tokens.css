@@ -1213,40 +1213,55 @@ a:hover { color: #f2c869; }
   font-size: clamp(1.25rem, 3vw, 1.6rem);
   color: var(--ink);
 }
-.origin-achievement {
+/*
+  Round 9 (2026-11-14): "Your Origin" milestones row — First Game
+  Played, First Achievement Unlocked, First Game with 100% Achievements
+  Completed — replacing the earlier single-achievement card with a
+  3-up grid matching the structure of Andy's own Playback Archive
+  screenshot (label above, box art centered, name + date below), in
+  this page's own card styling rather than Xbox's layout/branding.
+*/
+.origin-milestones {
   margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.milestone-tile {
   display: flex;
-  gap: 18px;
+  flex-direction: column;
   align-items: center;
+  text-align: center;
   border: 1px solid var(--rule);
   border-radius: 12px;
   padding: 18px;
   background: var(--bg-elevated);
 }
-.origin-achievement img {
-  width: 90px;
-  flex: 0 0 auto;
+.milestone-tile .hero-eyebrow { display: block; }
+.milestone-tile img {
+  width: 100px;
   aspect-ratio: 3/4;
   object-fit: cover;
   border-radius: 8px;
   border: 1px solid var(--rule);
   box-shadow: 0 12px 24px -10px rgba(0,0,0,0.5);
+  margin: 12px 0;
 }
-.origin-achievement-name {
+.milestone-name {
   font-family: var(--display);
   font-weight: 900;
   color: var(--gold);
   font-size: 1.1rem;
   margin: 2px 0 4px;
 }
-.origin-achievement-meta {
+.milestone-meta {
   color: var(--ink-3);
   font-size: 0.88rem;
   margin: 0;
 }
 @media (max-width: 640px) {
   .origin-stats { grid-template-columns: 1fr; }
-  .origin-achievement { flex-direction: column; align-items: flex-start; }
+  .origin-milestones { grid-template-columns: 1fr; }
 }
 
 /*
