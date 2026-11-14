@@ -434,8 +434,22 @@ const highlights = [
       if (!row) return;
       var prev = document.querySelector(".scroll-arrow.prev");
       var next = document.querySelector(".scroll-arrow.next");
+
+      // Step by exactly one card (its full width plus the row's gap),
+      // not a fraction of the whole row — so each arrow click advances
+      // the list one game at a time instead of jumping several cards
+      // at once. Measured from the actual rendered cards (the gap
+      // between the first two) so it stays correct if the card size or
+      // gap ever changes, rather than a hardcoded pixel value.
+      function cardStep() {
+        var first = row.querySelector(".favorite-card");
+        if (!first) return row.clientWidth;
+        var second = first.nextElementSibling;
+        if (second) return second.offsetLeft - first.offsetLeft;
+        return first.getBoundingClientRect().width;
+      }
       function scrollByAmount(dir) {
-        row.scrollBy({ left: row.clientWidth * 0.8 * dir, behavior: "smooth" });
+        row.scrollBy({ left: cardStep() * dir, behavior: "smooth" });
       }
       if (prev) prev.addEventListener("click", function () { scrollByAmount(-1); });
       if (next) next.addEventListener("click", function () { scrollByAmount(1); });
