@@ -419,6 +419,7 @@ const highlights = [
           <label class="owner-btn">Choose right image<input type="file" accept="image/*" data-slot="right" hidden /></label>
           <a class="owner-save" data-save="right" hidden>Save as right.png</a>
         </div>
+        <p id="owner-status" role="status" aria-live="polite"></p>
       </div>
       <div class="origin-milestones">
         {originMilestones.map((m) => (
@@ -588,6 +589,41 @@ const highlights = [
       var panel = document.getElementById("origin-owner-tools");
       if (!panel || !/[?&]edit=1/.test(location.search)) return;
       panel.hidden = false;
+      var savedBlobs = {};
+      var status = document.getElementById("owner-status");
+      function say(msg) { if (status) status.textContent = msg; }
+      // "Save as ..." opens a real Save window (Chrome/Edge) so the file goes
+      // straight into the folder you pick; other browsers fall back to a
+      // normal download.
+      panel.querySelectorAll(".owner-save").forEach(function (a) {
+        a.addEventListener("click", function (e) {
+          var slot = a.getAttribute("data-save");
+          var blob = savedBlobs[slot];
+          if (!blob || !window.showSaveFilePicker) {
+            say("Your browser is downloading " + slot + ".png to its Downloads folder.");
+            return;
+          }
+          e.preventDefault();
+          window.showSaveFilePicker({
+            id: "origin-folder",
+            suggestedName: slot + ".png",
+            types: [{ description: "PNG image", accept: { "image/png": [".png"] } }],
+          }).then(function (handle) {
+            return handle.createWritable().then(function (w) {
+              return w.write(blob).then(function () { return w.close(); });
+            }).then(function () {
+              say("Saved " + handle.name + ". Now run the git add / commit / push commands.");
+            });
+          }).catch(function (err) {
+            if (err && err.name === "AbortError") { say("Save cancelled — click it again and pick the folder."); return; }
+            say("Could not save (" + (err && err.name) + "). Falling back to a download.");
+            var tmp = document.createElement("a");
+            tmp.href = URL.createObjectURL(blob);
+            tmp.download = slot + ".png";
+            document.body.appendChild(tmp); tmp.click(); tmp.remove();
+          });
+        });
+      });
       var nodes = document.querySelectorAll(".origin-graphic .origin-node");
       var slots = { left: nodes[0], right: nodes[nodes.length - 1] };
       panel.querySelectorAll('input[type="file"]').forEach(function (input) {
@@ -627,6 +663,8 @@ const highlights = [
               a.href = URL.createObjectURL(blob);
               a.download = slot + ".png";
               a.hidden = false;
+              savedBlobs[slot] = blob;
+              say("Preview shown above. Now click \"Save as " + slot + ".png\" and choose the origin folder.");
             }, "image/png");
           };
           img.src = url;
