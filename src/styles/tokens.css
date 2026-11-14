@@ -1213,6 +1213,73 @@ a:hover { color: #f2c869; }
   font-size: clamp(1.25rem, 3vw, 1.6rem);
   color: var(--ink);
 }
+
+/*
+  Round 12 (2026-11-14): "Your Origin" connector graphic — two badges
+  joined by a line, replacing the plain stat cards that used to open
+  this section. Same idea as Xbox's own "player since / first console"
+  pairing, but the icons are our own plain geometric shapes (a ringed
+  medallion, a generic button cluster), not Xbox's logo or console
+  silhouette, drawn in this page's gold/dark palette.
+*/
+.origin-graphic {
+  margin-top: 24px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+  padding: 12px 0;
+}
+.origin-graphic::before {
+  content: "";
+  position: absolute;
+  left: 15%;
+  right: 15%;
+  top: 38px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+  opacity: 0.6;
+  z-index: 0;
+}
+.origin-node {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+}
+.origin-badge {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  background: radial-gradient(circle at 35% 30%, var(--bg-elevated-2), var(--bg-elevated));
+  border: 1px solid var(--rule-strong);
+  box-shadow: 0 0 0 6px var(--bg);
+}
+.origin-badge svg { width: 42px; height: 42px; }
+.origin-line { display: none; } /* the connecting line is drawn by .origin-graphic::before */
+@media (max-width: 640px) {
+  .origin-graphic {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .origin-graphic::before {
+    left: 50%;
+    right: auto;
+    top: 38px;
+    bottom: 38px;
+    width: 2px;
+    height: auto;
+  }
+}
+
 /*
   Round 9 (2026-11-14): "Your Origin" milestones row — First Game
   Played, First Achievement Unlocked, First Game with 100% Achievements
@@ -1370,6 +1437,12 @@ a:hover { color: #f2c869; }
   gap: 12px;
   margin-bottom: 10px;
 }
+.stat-bar-swatch {
+  flex: 0 0 auto;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
 .stat-bar-label {
   flex: 0 0 110px;
   font-family: var(--mono);
@@ -1397,6 +1470,49 @@ a:hover { color: #f2c869; }
   font-size: 0.82rem;
   color: var(--ink);
 }
+
+/*
+  Round 12 (2026-11-14): genre pictogram — a grid of small shapes under
+  the Top Genres bars, one shape+color per genre, counted so the tally
+  of pieces matches each genre's share (70 pieces total, largest-
+  remainder rounding in the frontmatter). Plain CSS shapes, no images.
+*/
+.genre-pictogram {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  max-width: 19rem;
+}
+.pictogram-piece {
+  width: 13px;
+  height: 13px;
+  flex: 0 0 auto;
+  background: currentColor;
+}
+.pictogram-piece.shape-circle { border-radius: 50%; }
+.pictogram-piece.shape-square { border-radius: 2px; }
+.pictogram-piece.shape-diamond { border-radius: 2px; transform: rotate(45deg); }
+.pictogram-piece.shape-triangle {
+  width: 0;
+  height: 0;
+  background: none;
+  border-left: 6.5px solid transparent;
+  border-right: 6.5px solid transparent;
+  border-bottom: 13px solid currentColor;
+}
+.pictogram-piece.shape-plus {
+  position: relative;
+  background: none;
+}
+.pictogram-piece.shape-plus::before,
+.pictogram-piece.shape-plus::after {
+  content: "";
+  position: absolute;
+  background: currentColor;
+}
+.pictogram-piece.shape-plus::before { left: 5px; right: 5px; top: 0; bottom: 0; }
+.pictogram-piece.shape-plus::after { top: 5px; bottom: 5px; left: 0; right: 0; }
 
 .xbox25-legacy { margin-top: 40px; }
 .xbox25-legacy h2 { font-size: clamp(1.4rem, 3vw, 1.8rem); }

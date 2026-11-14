@@ -174,6 +174,48 @@ const topGenres = [
   { label: "Other", pct: 11 },
 ];
 
+// Genre pictogram (round 12, 2026-11-14): a grid of small shapes, one
+// per genre, sized by percentage — the same "pieces" treatment Xbox's
+// own archive page uses under Top Genres. Plain geometric shapes and a
+// rounding method, nothing borrowed from Xbox's actual page beyond the
+// idea of a shape-grid. One shape + one color per genre, reused for
+// both the small label swatch on each bar row and the grid itself so
+// they read as the same legend.
+const genreShapes = ["circle", "diamond", "triangle", "square", "plus"];
+const genreColors = ["var(--gold)", "var(--new)", "var(--ink)", "var(--gold-dim)", "var(--up)"];
+const PICTOGRAM_TOTAL = 70;
+function buildPictogram(items, total) {
+  // Largest-remainder rounding so the piece counts sum to exactly
+  // `total` instead of drifting from naive per-item rounding.
+  const raw = items.map((it) => (it.pct / 100) * total);
+  const counts = raw.map(Math.floor);
+  let used = counts.reduce((a, b) => a + b, 0);
+  const order = raw
+    .map((r, i) => ({ i, remainder: r - counts[i] }))
+    .sort((a, b) => b.remainder - a.remainder);
+  let k = 0;
+  while (used < total && order.length > 0) {
+    counts[order[k % order.length].i] += 1;
+    used += 1;
+    k += 1;
+  }
+  const pieces = [];
+  items.forEach((it, i) => {
+    for (let n = 0; n < counts[i]; n++) {
+      pieces.push({
+        shape: genreShapes[i % genreShapes.length],
+        color: genreColors[i % genreColors.length],
+        label: it.label,
+      });
+    }
+  });
+  return pieces;
+}
+const genrePieces = buildPictogram(topGenres, PICTOGRAM_TOTAL);
+const genrePictogramLabel = `Genre breakdown: ${topGenres
+  .map((g) => `${g.label} ${g.pct}%`)
+  .join(", ")}`;
+
 // "Your Legacy" — rarest achievement, completion stats, and percentile
 // rings, from Andy's own screenshot of that section. The rings show
 // how full the circle is, not the raw "top X%" figure directly — a
@@ -263,9 +305,6 @@ const highlights = [
         <div>
           <span class="hero-eyebrow">Most played</span>
           <h2>Fallout 76</h2>
-          <p class="hero-meta">
-            Xbox's archive tagged Andy's playstyle here as "The Slasher."
-          </p>
           <p class="hero-take">
             The #1 game in Andy's Playback Archive — more hours sunk into
             Appalachia than anywhere else on Xbox.
@@ -306,13 +345,30 @@ const highlights = [
 
     <section class="xbox25-origin">
       <h2>Your Origin</h2>
-      <div class="origin-stats">
-        <div class="origin-stat">
-          <span class="hero-eyebrow">Joined Xbox</span>
+      <div class="origin-graphic">
+        <div class="origin-node">
+          <div class="origin-badge" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none">
+              <circle cx="24" cy="24" r="20.5" stroke="currentColor" stroke-width="2.5"></circle>
+              <circle cx="24" cy="24" r="12.5" stroke="currentColor" stroke-width="2.5"></circle>
+              <circle cx="24" cy="24" r="4" fill="currentColor"></circle>
+            </svg>
+          </div>
+          <span class="hero-eyebrow">Xbox Player Since</span>
           <div class="origin-value">November 22, 2007</div>
         </div>
-        <div class="origin-stat">
-          <span class="hero-eyebrow">First console</span>
+        <div class="origin-line" aria-hidden="true"></div>
+        <div class="origin-node">
+          <div class="origin-badge origin-badge-console" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none">
+              <rect x="6" y="16" width="36" height="17" rx="8.5" stroke="currentColor" stroke-width="2.5"></rect>
+              <circle cx="16.5" cy="24.5" r="2.3" fill="currentColor"></circle>
+              <circle cx="32" cy="20.8" r="1.9" fill="currentColor"></circle>
+              <circle cx="36" cy="24.5" r="1.9" fill="currentColor"></circle>
+              <circle cx="32" cy="28.2" r="1.9" fill="currentColor"></circle>
+            </svg>
+          </div>
+          <span class="hero-eyebrow">Your First Console</span>
           <div class="origin-value">Xbox 360</div>
         </div>
       </div>
@@ -369,8 +425,13 @@ const highlights = [
         </div>
         <div class="journey-column">
           <h3>Top Genres</h3>
-          {topGenres.map((g) => (
+          {topGenres.map((g, i) => (
             <div class="stat-bar-row">
+              <span
+                class="stat-bar-swatch"
+                style={`background:${genreColors[i % genreColors.length]}`}
+                aria-hidden="true"
+              ></span>
               <span class="stat-bar-label">{g.label}</span>
               <span class="stat-bar-track">
                 <span class="stat-bar-fill" style={`width:${g.pct}%`}></span>
@@ -378,6 +439,19 @@ const highlights = [
               <span class="stat-bar-value">{g.pct}%</span>
             </div>
           ))}
+          <div
+            class="genre-pictogram"
+            role="img"
+            aria-label={genrePictogramLabel}
+          >
+            {genrePieces.map((p) => (
+              <span
+                class={`pictogram-piece shape-${p.shape}`}
+                style={`color:${p.color}`}
+                title={p.label}
+              ></span>
+            ))}
+          </div>
         </div>
       </div>
     </section>
