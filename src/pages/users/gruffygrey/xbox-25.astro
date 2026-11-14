@@ -1,0 +1,571 @@
+---
+// GruffyGrey's "Xbox 25" page — a hand-authored personal retrospective for
+// Xbox's 25th anniversary (November 15, 2026), nested under the GruffyGrey
+// entry in Users (see BaseLayout.astro's .submenu-nested and
+// users/index.astro's .subpage-links-nested). Not a live Xbox-API
+// dashboard — consistent with this project's "favor maintainability,
+// assume a single content creator" rule, this is a plain page edited by
+// hand as more data comes in. Built directly from Andy's xbox-25.astro
+// (src/pages/users/andy/xbox-25.astro) as the structural/visual template —
+// same markup, same dark/gold tokens.css system, same sections, just a
+// second person's real data.
+//
+// Xbox's own feature is called the "Playback Archive." This page pulls
+// real facts from GruffyGrey's own archive (10 screenshots he supplied
+// directly) but is written in this site's own voice and built from its
+// own dark/gold tokens.css system rather than cloning Xbox's green-
+// branded UI — same "inspired by, not cloned" convention the rest of the
+// site already follows.
+//
+// Unlike Andy's page, GruffyGrey's real gamertag IS shown here —
+// "GruffyGrey" is his existing public handle on this site already (see
+// the Users hub's live link to his WordPress profile), so there's no
+// anonymization step the way there is for Andy.
+//
+// Content status (2026-11-14): built in one pass from 10 screenshots of
+// GruffyGrey's own Playback Archive — the #1 most-played game (with its
+// full stat line and two Gamerscore/percentile rings), Your Origin, Your
+// Journey (lifetime totals, best years, where he played, top genres), all
+// nine "Other Favorites" ranks (2-10), three category highlights, and
+// Your Legacy (rarest achievement, completion stats, percentile rings)
+// are all confirmed from those screenshots. His archive doesn't surface
+// an overall achievement count across every game the way the per-game
+// counts are shown (same gap Andy's page has) — see the pending-panel
+// below. Nothing here is invented to fill that gap.
+//
+// Box art: every game's art is sourced fresh and independently from
+// Xbox's own store pages / Microsoft Store image CDN, same convention as
+// Andy's page. Three exceptions, all cropped directly from GruffyGrey's
+// own Playback Archive screenshots (his own screenshots are themselves
+// Xbox's official rendering, just not reachable via a live store-page
+// fetch):
+//   - Minecraft for Windows 10's classic grass-block app tile icon (used
+//     for the hero art and the #1 Most Played card) — the current live
+//     xbox.com listing for "Minecraft" shows the modern unified
+//     product's different cover art, not this classic Windows 10 tile.
+//   - Minecraft for Windows 10's second, landscape cover (Steve, Alex,
+//     and friends on a grass cliff) — used only for the "Most Sessions"
+//     highlight tile, because that's the specific art GruffyGrey's own
+//     archive paired with that stat; it's a different official Minecraft
+//     render than the grass-block tile used elsewhere on this page.
+//   - Final Fight: Double Impact — a delisted Xbox Live Arcade title
+//     with no live xbox.com store page left to source from. Used for
+//     both "First Game Played" and "First Achievement Unlocked," since
+//     both milestones share the same game in GruffyGrey's archive.
+// Every other image (Fallout 76, Diablo 4, Stellaris: Console Edition,
+// Warhammer 40,000: Darktide, Mass Effect Legendary Edition, Halo: The
+// Master Chief Collection, and Age of Empires: Castle Siege) is reused
+// directly from Andy's own xbox-25 image folder — verified pixel-for-
+// pixel against GruffyGrey's screenshots first, since both players
+// happen to share these titles. MechWarrior 5: Mercenaries, Roblox for
+// Xbox, Metal Gear Rising: Revengeance, Totally Accurate Battle
+// Simulator, and Astroneer were sourced fresh from their live xbox.com
+// store pages.
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { withBase } from "../../../lib/site";
+
+const boxArt = withBase("/images/users/gruffygrey/xbox-25/minecraft-for-windows-10.jpg");
+
+const otherFavorites = [
+  {
+    rank: 2,
+    title: "Fallout 76",
+    image: "fallout-76.jpg",
+  },
+  {
+    rank: 3,
+    title: "Roblox for Xbox",
+    image: "roblox-for-xbox.jpg",
+  },
+  {
+    rank: 4,
+    title: "Diablo 4",
+    image: "diablo-4.jpg",
+  },
+  {
+    rank: 5,
+    title: "Stellaris: Console Edition",
+    image: "stellaris-console-edition.jpg",
+  },
+  {
+    rank: 6,
+    title: "Metal Gear Rising: Revengeance",
+    image: "metal-gear-rising-revengeance.jpg",
+  },
+  {
+    rank: 7,
+    title: "Warhammer 40,000: Darktide",
+    image: "warhammer-40k-darktide.jpg",
+  },
+  {
+    rank: 8,
+    title: "Totally Accurate Battle Simulator (Game Preview)",
+    image: "totally-accurate-battle-simulator.jpg",
+  },
+  {
+    rank: 9,
+    title: "Age of Empires: Castle Siege",
+    image: "age-of-empires-castle-siege.jpg",
+  },
+  {
+    rank: 10,
+    title: "Astroneer",
+    image: "astroneer.jpg",
+  },
+];
+
+// "Your Origin" milestones — first game played, first achievement ever
+// unlocked, and first game fully completed (100% achievements), from
+// GruffyGrey's own screenshot of that 3-up row. Sits alongside the
+// origin-stats (joined date, first console) in the same section.
+const originMilestones = [
+  {
+    label: "First Game Played",
+    name: "Final Fight: Double Impact",
+    meta: "November 21, 2010",
+    image: "final-fight-double-impact.jpg",
+    alt: "Final Fight: Double Impact box art",
+  },
+  {
+    label: "First Achievement Unlocked",
+    name: "Ninja Skills",
+    meta: "Final Fight: Double Impact · Unlocked November 21, 2010",
+    image: "final-fight-double-impact.jpg",
+    alt: "Final Fight: Double Impact box art",
+  },
+  {
+    label: "First Game with 100% Achievements Completed",
+    name: "MechWarrior 5: Mercenaries",
+    meta: "Unlocked October 21, 2025",
+    image: "mechwarrior-5-mercenaries.jpg",
+    alt: "MechWarrior 5: Mercenaries box art",
+  },
+];
+
+// Minecraft for Windows 10's full stat line + Gamerscore ring, from
+// GruffyGrey's "#1 Most Played Game" screenshot.
+const topGameStats = {
+  timePlayed: "1,592h",
+  gamerscore: "1,295",
+  achievements: "65",
+  topAchievement: "Buy Low, Sell High",
+  gamerscorePct: 43,
+  activePlayerPct: 0.4,
+};
+
+// "Your Journey" — lifetime totals and best years, from GruffyGrey's own
+// screenshot of that section.
+const journeyStats = [
+  { label: "Total Playing Time", value: "10,006h" },
+  { label: "Total Games Played", value: "637" },
+  { label: "Top Genre", value: "Action & Adventure" },
+];
+const journeyYears = [
+  { label: "Year With Most Play Time", value: "2021", sub: "1,437h" },
+  { label: "Year With Highest Gamerscore", value: "2021", sub: "7,205" },
+  { label: "Year With Most Games Played", value: "2018", sub: "165 games" },
+];
+const wherePlayed = [
+  { label: "Console", hours: 6932 },
+  { label: "PC", hours: 2719 },
+  { label: "Cloud", hours: 10 },
+  { label: "Mobile", hours: 0 },
+];
+const wherePlayedMax = Math.max(...wherePlayed.map((w) => w.hours));
+const topGenres = [
+  { label: "Action & Adventure", pct: 53 },
+  { label: "Role Playing", pct: 19 },
+  { label: "Strategy", pct: 8 },
+  { label: "Simulation", pct: 6 },
+  { label: "Other", pct: 14 },
+];
+
+// "Your Legacy" — rarest achievement, completion stats, and percentile
+// rings, from GruffyGrey's own screenshot of that section. The rings
+// show how full the circle is, not the raw "top X%" figure directly — a
+// "top 0.1%" ring reads as 99.9% filled (nearly whole, tiny gap),
+// matching how Xbox's own page draws it.
+const legacyStats = [
+  {
+    label: "Rarest Achievement",
+    value: "7 Horizons",
+    sub: "Before We Leave · Unlocked January 13, 2023",
+  },
+  {
+    label: "Games Completed",
+    value: "1",
+    sub: "with 100% achievements unlocked",
+  },
+  {
+    label: "Longest Play Streak",
+    value: "133 Days",
+    sub: "November 25, 2021 – April 6, 2022",
+  },
+];
+const legacyPercentiles = [
+  { label: "Achievements unlocked", topPct: 0.7 },
+  { label: "Gamerscore", topPct: 0.6 },
+  { label: "Time played", topPct: 1.4 },
+];
+
+const highlights = [
+  {
+    label: "Highest Gamerscore",
+    title: "Mass Effect Legendary Edition",
+    image: "mass-effect-legendary-edition.jpg",
+  },
+  {
+    label: "Highest Achievements",
+    title: "Halo: The Master Chief Collection",
+    image: "halo-mcc.jpg",
+  },
+  {
+    label: "Most Sessions",
+    title: "Minecraft for Windows 10",
+    image: "minecraft-for-windows-10-sessions.jpg",
+  },
+];
+---
+<BaseLayout
+  title="Xbox 25 — GruffyGrey"
+  description="GruffyGrey's personal look back at 25 years of Xbox, built from his own Xbox Playback Archive."
+>
+  <div class="xbox25-page-wrap">
+    <div class="xbox25-ambient" aria-hidden="true">
+      <svg viewBox="0 0 1600 460" preserveAspectRatio="xMidYMid slice">
+        <path class="line line-a" d="M-100,260 C 250,60 650,440 1050,180 S 1850,340 2100,120" />
+        <path class="line line-b" d="M-100,360 C 380,480 780,80 1180,340 S 1950,140 2200,280" />
+        <path class="line line-c" d="M-100,140 C 330,340 730,140 1130,340 S 1930,200 2150,380" />
+      </svg>
+    </div>
+    <main class="wrap simple-page xbox25-page">
+    <div class="xbox25-topbar">
+      <span class="kicker">Users · GruffyGrey</span>
+      <button class="share-button" id="xbox25-share" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="18" cy="5" r="3"></circle>
+          <circle cx="6" cy="12" r="3"></circle>
+          <circle cx="18" cy="19" r="3"></circle>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+        </svg>
+        <span class="share-label">Share</span>
+      </button>
+    </div>
+    <h1>25 Years of Xbox, GruffyGrey's Way</h1>
+    <p class="lede">
+      Xbox turns 25 on November 15, 2026, and to mark it they built every
+      player a personal "Playback Archive" — stats and milestones pulled from
+      years of play. This is GruffyGrey's version of that, straight from his
+      own archive.
+    </p>
+
+    <div class="hero-panel xbox25-hero">
+      <div class="glow" aria-hidden="true"></div>
+      <div class="backdrop" style={`background-image:url(${boxArt})`}></div>
+      <div class="scrim"></div>
+      <div class="content">
+        <img class="art" src={boxArt} alt="Minecraft for Windows 10 box art" />
+        <div>
+          <span class="hero-eyebrow">Most played</span>
+          <h2>Minecraft for Windows 10</h2>
+          <p class="hero-meta">
+            1,592 hours — more than anything else in GruffyGrey's library.
+          </p>
+          <p class="hero-take">
+            The #1 game in GruffyGrey's Playback Archive, and the game he's
+            come back to longer than any other on Xbox.
+          </p>
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <span class="hero-stat-label">Total time played</span>
+              <span class="hero-stat-value">{topGameStats.timePlayed}</span>
+            </div>
+            <div class="hero-stat">
+              <span class="hero-stat-label">Total Gamerscore</span>
+              <span class="hero-stat-value">{topGameStats.gamerscore}</span>
+            </div>
+            <div class="hero-stat">
+              <span class="hero-stat-label">Total achievements</span>
+              <span class="hero-stat-value">{topGameStats.achievements}</span>
+            </div>
+            <div class="hero-stat">
+              <span class="hero-stat-label">Top achievement</span>
+              <span class="hero-stat-value">{topGameStats.topAchievement}</span>
+            </div>
+          </div>
+          <div class="hero-ring-wrap">
+            <div class="ring" style={`--pct:${topGameStats.gamerscorePct}`}>
+              <span class="ring-value">{topGameStats.gamerscorePct}%</span>
+            </div>
+            <p class="ring-caption">
+              of the possible Gamerscore earned in Minecraft for Windows 10.
+            </p>
+          </div>
+          <div class="hero-ring-wrap">
+            <div class="ring" style={`--pct:${100 - topGameStats.activePlayerPct}`}>
+              <span class="ring-value">{topGameStats.activePlayerPct}%</span>
+            </div>
+            <p class="ring-caption">
+              You're in the top {topGameStats.activePlayerPct}% of this
+              game's most active players.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="xbox25-callout">
+      <strong>Minecraft for Windows 10</strong> is GruffyGrey's #1 played game of all time.
+    </p>
+
+    <section class="xbox25-origin">
+      <h2>Your Origin</h2>
+      <div class="origin-stats">
+        <div class="origin-stat">
+          <span class="hero-eyebrow">Xbox player since</span>
+          <div class="origin-value">November 15, 2010</div>
+        </div>
+        <div class="origin-stat">
+          <span class="hero-eyebrow">First console</span>
+          <div class="origin-value">Xbox 360</div>
+        </div>
+      </div>
+      <div class="origin-milestones">
+        {originMilestones.map((m) => (
+          <div class="milestone-tile">
+            <span class="hero-eyebrow">{m.label}</span>
+            <img
+              src={withBase(`/images/users/gruffygrey/xbox-25/${m.image}`)}
+              alt={m.alt}
+              loading="lazy"
+            />
+            <p class="milestone-name">{m.name}</p>
+            <p class="milestone-meta">{m.meta}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="xbox25-journey">
+      <h2>Your Journey</h2>
+      <div class="journey-stats">
+        {journeyStats.map((s) => (
+          <div class="origin-stat">
+            <span class="hero-eyebrow">{s.label}</span>
+            <div class="origin-value">{s.value}</div>
+          </div>
+        ))}
+      </div>
+      <div class="journey-stats journey-years">
+        {journeyYears.map((y) => (
+          <div class="origin-stat">
+            <span class="hero-eyebrow">{y.label}</span>
+            <div class="origin-value">{y.value}</div>
+            <div class="origin-subvalue">{y.sub}</div>
+          </div>
+        ))}
+      </div>
+      <div class="journey-split">
+        <div class="journey-column">
+          <h3>Where You Played</h3>
+          {wherePlayed.map((w) => (
+            <div class="stat-bar-row">
+              <span class="stat-bar-label">{w.label}</span>
+              <span class="stat-bar-track">
+                <span
+                  class="stat-bar-fill"
+                  style={`width:${Math.round((w.hours / wherePlayedMax) * 100)}%`}
+                ></span>
+              </span>
+              <span class="stat-bar-value">{w.hours.toLocaleString()}h</span>
+            </div>
+          ))}
+        </div>
+        <div class="journey-column">
+          <h3>Top Genres</h3>
+          {topGenres.map((g) => (
+            <div class="stat-bar-row">
+              <span class="stat-bar-label">{g.label}</span>
+              <span class="stat-bar-track">
+                <span class="stat-bar-fill" style={`width:${g.pct}%`}></span>
+              </span>
+              <span class="stat-bar-value">{g.pct}%</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="xbox25-favorites">
+      <h2>Other Favorites</h2>
+      <p class="section-note">
+        Ranks 2–10 as Xbox's archive listed them. Scroll or use the arrows.
+      </p>
+      <div class="scroll-row-wrap">
+        <button class="scroll-arrow prev" type="button" aria-label="Scroll left">‹</button>
+        <ul class="scroll-row" id="favorites-row">
+          {otherFavorites.map((game) => (
+            <li class="favorite-card">
+              <img
+                src={withBase(`/images/users/gruffygrey/xbox-25/${game.image}`)}
+                alt={`${game.title} box art`}
+                loading="lazy"
+              />
+              <span class="favorite-rank">{game.rank}</span>
+              <span class="favorite-title">{game.title}</span>
+            </li>
+          ))}
+        </ul>
+        <button class="scroll-arrow next" type="button" aria-label="Scroll right">›</button>
+      </div>
+    </section>
+
+    <section class="xbox25-highlights">
+      <h2>Category Highlights</h2>
+      <div class="highlight-grid">
+        {highlights.map((h) => (
+          <div class="highlight-tile">
+            <span class="hero-eyebrow">{h.label}</span>
+            <img
+              src={withBase(`/images/users/gruffygrey/xbox-25/${h.image}`)}
+              alt={`${h.title} box art`}
+              loading="lazy"
+            />
+            <p class="highlight-title">{h.title}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="xbox25-legacy">
+      <h2>Your Legacy</h2>
+      <div class="legacy-stats">
+        {legacyStats.map((s) => (
+          <div class="origin-stat">
+            <span class="hero-eyebrow">{s.label}</span>
+            <div class="origin-value">{s.value}</div>
+            <div class="origin-subvalue">{s.sub}</div>
+          </div>
+        ))}
+      </div>
+      <div class="legacy-rings">
+        {legacyPercentiles.map((p) => (
+          <div class="legacy-ring-tile">
+            <div class="ring" style={`--pct:${100 - p.topPct}`}>
+              <span class="ring-value">{p.topPct}%</span>
+            </div>
+            <p>
+              You're in the <strong>top {p.topPct}%</strong> of players for{" "}
+              {p.label}.
+            </p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <div class="pending-panel">
+      <strong>More of this story is on its way.</strong>
+      <p>
+        Still pending: GruffyGrey's overall achievement count across every
+        game (Minecraft for Windows 10's own count above is confirmed — this
+        is the career-wide total). That lands here once it's been pulled
+        together — nothing here is getting invented in the meantime.
+      </p>
+    </div>
+    </main>
+  </div>
+
+  <script is:inline>
+    (function () {
+      // Horizontal scroll row for "Other Favorites" — plain native
+      // overflow-x scrolling (works with touch/trackpad on its own;
+      // the arrow buttons are just a convenience, same philosophy as
+      // the hero rotator's dots: simple, no extra library).
+      var row = document.getElementById("favorites-row");
+      if (!row) return;
+      var prev = document.querySelector(".scroll-arrow.prev");
+      var next = document.querySelector(".scroll-arrow.next");
+
+      // Step by exactly one card (its full width plus the row's gap),
+      // not a fraction of the whole row — so each arrow click advances
+      // the list one game at a time instead of jumping several cards
+      // at once. Measured from the actual rendered cards (the gap
+      // between the first two) so it stays correct if the card size or
+      // gap ever changes, rather than a hardcoded pixel value.
+      function cardStep() {
+        var first = row.querySelector(".favorite-card");
+        if (!first) return row.clientWidth;
+        var second = first.nextElementSibling;
+        if (second) return second.offsetLeft - first.offsetLeft;
+        return first.getBoundingClientRect().width;
+      }
+      function scrollByAmount(dir) {
+        row.scrollBy({ left: cardStep() * dir, behavior: "smooth" });
+      }
+      if (prev) prev.addEventListener("click", function () { scrollByAmount(-1); });
+      if (next) next.addEventListener("click", function () { scrollByAmount(1); });
+
+      // The arrows only mean anything once the row actually has more
+      // content than fits — with just a handful of cards the row is
+      // narrower than its wrapper, so an arrow pinned to the wrapper's
+      // edge floats past the last real card instead of sitting next to
+      // it, and clicking it does nothing because there's nothing left
+      // to scroll to. Hide both arrows until the row genuinely
+      // overflows (more favorites land, or the viewport narrows), and
+      // recheck on resize since that can flip either way.
+      function updateArrowVisibility() {
+        var scrollable = row.scrollWidth > row.clientWidth + 1;
+        if (prev) prev.style.display = scrollable ? "" : "none";
+        if (next) next.style.display = scrollable ? "" : "none";
+      }
+      updateArrowVisibility();
+      window.addEventListener("resize", updateArrowVisibility);
+    })();
+  </script>
+
+  <script is:inline>
+    (function () {
+      // Real share button: uses the Web Share sheet where the browser
+      // supports it (most mobile browsers, some desktop ones), falls
+      // back to copying the page URL to the clipboard otherwise — not
+      // a decorative button, it actually does something either way.
+      var btn = document.getElementById("xbox25-share");
+      if (!btn) return;
+      var label = btn.querySelector(".share-label");
+      function flash(text) {
+        if (!label) return;
+        var original = label.textContent;
+        label.textContent = text;
+        btn.classList.add("is-done");
+        setTimeout(function () {
+          label.textContent = original;
+          btn.classList.remove("is-done");
+        }, 1800);
+      }
+      btn.addEventListener("click", async function () {
+        var shareData = {
+          title: document.title,
+          text: "GruffyGrey's 25 years of Xbox, told through his own play — on Death By Backlog.",
+          url: window.location.href,
+        };
+        if (navigator.share) {
+          try {
+            await navigator.share(shareData);
+          } catch (e) {
+            // User backed out of the share sheet — not an error.
+          }
+          return;
+        }
+        try {
+          await navigator.clipboard.writeText(window.location.href);
+          flash("Copied!");
+        } catch (e) {
+          // No Web Share API and no clipboard access — nothing more
+          // we can do without a server-side share endpoint, which
+          // this static, single-creator site deliberately doesn't have.
+        }
+      });
+    })();
+  </script>
+</BaseLayout>

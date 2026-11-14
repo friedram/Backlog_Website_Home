@@ -11,6 +11,10 @@
 // hand-authored 25th-anniversary feature — linked as a nested row right
 // under his "soon" block (see .subpage-links-nested below) rather than
 // waiting on the rest of his profile.
+//
+// GruffyGrey (2026-11-14) gets the same "Xbox 25" treatment, nested right
+// under his existing live WordPress link instead of a "soon" block, since
+// his profile already exists there.
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { withBase } from "../../lib/site";
 ---
@@ -23,6 +27,13 @@ import { withBase } from "../../lib/site";
         <span class="label-block">
           GruffyGrey
           <span class="desc">Books/series I like.</span>
+        </span>
+        <span class="arrow">→</span>
+      </a>
+      <a class="subpage-links-nested" href={withBase("/users/gruffygrey/xbox-25/")}>
+        <span class="label-block">
+          ↳ Xbox 25
+          <span class="desc">25 years of Xbox, told through GruffyGrey's own play.</span>
         </span>
         <span class="arrow">→</span>
       </a>
