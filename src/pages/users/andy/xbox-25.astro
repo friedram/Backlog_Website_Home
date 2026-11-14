@@ -27,6 +27,14 @@
 // below. Do not invent those; replace the pending-panel once he sends
 // them.
 //
+// Visual treatment (2026-11-14): a full-bleed animated line backdrop
+// behind the top of the page and a bold centered stat callout, matching
+// the general "wrapped"-style recap energy of Xbox's own page (motion +
+// a declarative headline statement) — but built entirely from this
+// site's own gold/dark palette and its own line paths, not Xbox's green
+// identity, logo, or literal background graphic. See tokens.css's
+// .xbox25-page-wrap / .xbox25-ambient comment for the reasoning.
+//
 // Box art: every game's art is sourced fresh and independently from
 // Xbox's own store pages / Microsoft Store image CDN, per Andy's
 // explicit "real Xbox art for every game" direction (2026-11-13,
@@ -81,8 +89,28 @@ const highlights = [
   title="Xbox 25 — Andy"
   description="Andy's personal look back at 25 years of Xbox, built from his own Xbox Playback Archive."
 >
-  <main class="wrap simple-page xbox25-page">
-    <span class="kicker">Users · Andy</span>
+  <div class="xbox25-page-wrap">
+    <div class="xbox25-ambient" aria-hidden="true">
+      <svg viewBox="0 0 1600 460" preserveAspectRatio="xMidYMid slice">
+        <path class="line line-a" d="M-100,260 C 250,60 650,440 1050,180 S 1850,340 2100,120" />
+        <path class="line line-b" d="M-100,360 C 380,480 780,80 1180,340 S 1950,140 2200,280" />
+        <path class="line line-c" d="M-100,140 C 330,340 730,140 1130,340 S 1930,200 2150,380" />
+      </svg>
+    </div>
+    <main class="wrap simple-page xbox25-page">
+    <div class="xbox25-topbar">
+      <span class="kicker">Users · Andy</span>
+      <button class="share-button" id="xbox25-share" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="18" cy="5" r="3"></circle>
+          <circle cx="6" cy="12" r="3"></circle>
+          <circle cx="18" cy="19" r="3"></circle>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+        </svg>
+        <span class="share-label">Share</span>
+      </button>
+    </div>
     <h1>25 Years of Xbox, My Way</h1>
     <p class="lede">
       Xbox turns 25 on November 15, 2026, and to mark it they built every
@@ -91,7 +119,8 @@ const highlights = [
       swapped out for "Andy" so it stays about the games, not the handle.
     </p>
 
-    <div class="hero-panel">
+    <div class="hero-panel xbox25-hero">
+      <div class="glow" aria-hidden="true"></div>
       <div class="backdrop" style={`background-image:url(${boxArt})`}></div>
       <div class="scrim"></div>
       <div class="content">
@@ -109,6 +138,10 @@ const highlights = [
         </div>
       </div>
     </div>
+
+    <p class="xbox25-callout">
+      <strong>Fallout 76</strong> is Andy's #1 played game of all time.
+    </p>
 
     <section class="xbox25-origin">
       <h2>Your Origin</h2>
@@ -189,7 +222,8 @@ const highlights = [
         here is getting invented in the meantime.
       </p>
     </div>
-  </main>
+    </main>
+  </div>
 
   <script is:inline>
     (function () {
@@ -206,6 +240,51 @@ const highlights = [
       }
       if (prev) prev.addEventListener("click", function () { scrollByAmount(-1); });
       if (next) next.addEventListener("click", function () { scrollByAmount(1); });
+    })();
+  </script>
+
+  <script is:inline>
+    (function () {
+      // Real share button: uses the Web Share sheet where the browser
+      // supports it (most mobile browsers, some desktop ones), falls
+      // back to copying the page URL to the clipboard otherwise — not
+      // a decorative button, it actually does something either way.
+      var btn = document.getElementById("xbox25-share");
+      if (!btn) return;
+      var label = btn.querySelector(".share-label");
+      function flash(text) {
+        if (!label) return;
+        var original = label.textContent;
+        label.textContent = text;
+        btn.classList.add("is-done");
+        setTimeout(function () {
+          label.textContent = original;
+          btn.classList.remove("is-done");
+        }, 1800);
+      }
+      btn.addEventListener("click", async function () {
+        var shareData = {
+          title: document.title,
+          text: "Andy's 25 years of Xbox, told through his own play — on Death By Backlog.",
+          url: window.location.href,
+        };
+        if (navigator.share) {
+          try {
+            await navigator.share(shareData);
+          } catch (e) {
+            // User backed out of the share sheet — not an error.
+          }
+          return;
+        }
+        try {
+          await navigator.clipboard.writeText(window.location.href);
+          flash("Copied!");
+        } catch (e) {
+          // No Web Share API and no clipboard access — nothing more
+          // we can do without a server-side share endpoint, which
+          // this static, single-creator site deliberately doesn't have.
+        }
+      });
     })();
   </script>
 </BaseLayout>
