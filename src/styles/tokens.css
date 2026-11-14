@@ -1236,7 +1236,7 @@ a:hover { color: #f2c869; }
   position: absolute;
   left: 15%;
   right: 15%;
-  top: 38px;
+  top: 48px;
   height: 2px;
   background: linear-gradient(90deg, var(--gold-dim), var(--gold));
   opacity: 0.6;
@@ -1252,8 +1252,8 @@ a:hover { color: #f2c869; }
   gap: 8px;
 }
 .origin-badge {
-  width: 76px;
-  height: 76px;
+  width: 96px;
+  height: 96px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1263,21 +1263,35 @@ a:hover { color: #f2c869; }
   border: 1px solid var(--rule-strong);
   box-shadow: 0 0 0 6px var(--bg);
 }
-.origin-badge svg { width: 42px; height: 42px; }
+.origin-badge svg { width: 54px; height: 54px; }
+/* Round 14: the "first console" slot is a real photo of the console
+   (Xbox 360 photo by Evan-Amos, public domain, via Wikimedia Commons,
+   background removed). The bg-colored backing hides the connector line
+   behind the transparent parts of the cutout, same job the badge's
+   ring shadow does for the left icon. */
+.origin-photo {
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  background: var(--bg);
+}
+.origin-photo img {
+  height: 96px;
+  width: auto;
+  max-width: 100%;
+  display: block;
+  filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.4));
+}
 .origin-line { display: none; } /* the connecting line is drawn by .origin-graphic::before */
 @media (max-width: 640px) {
   .origin-graphic {
     flex-direction: column;
     gap: 20px;
   }
-  .origin-graphic::before {
-    left: 50%;
-    right: auto;
-    top: 38px;
-    bottom: 38px;
-    width: 2px;
-    height: auto;
-  }
+  /* stacked layout: the line would cut through the text, so drop it */
+  .origin-graphic::before { display: none; }
 }
 
 /*
@@ -1776,3 +1790,34 @@ a:hover { color: #f2c869; }
   color: var(--ink-3);
   font-size: 0.85rem;
 }
+
+/* Round 16: owner-only image picker under Your Origin (shown with ?edit=1) */
+.origin-owner-tools {
+  margin-top: 16px;
+  padding: 16px 18px;
+  border: 1px dashed var(--gold-dim);
+  border-radius: 12px;
+  background: var(--bg-elevated);
+  font-size: 0.9rem;
+  color: var(--ink-2);
+}
+.origin-owner-tools[hidden] { display: none; }
+.origin-owner-tools strong { color: var(--gold); }
+.origin-owner-tools p { margin: 6px 0 12px; }
+.owner-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.owner-btn, .owner-save {
+  cursor: pointer;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--gold-dim);
+  color: var(--gold);
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+.owner-save { color: var(--ink); border-color: var(--rule-strong); }
+.owner-save[hidden] { display: none; }
+
+/* Round 17: one wide owner-chosen picture replacing the whole Your Origin graphic */
+.origin-full { margin-top: 24px; display: flex; justify-content: center; }
+.origin-full img { width: 100%; max-width: 640px; height: auto; display: block; border-radius: 12px; }

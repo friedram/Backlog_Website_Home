@@ -58,6 +58,14 @@
 // Andy's own screenshots — see originMilestones below.
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { withBase } from "../../../lib/site";
+import { findOriginImage } from "../../../lib/originImage";
+
+// Optional owner-chosen images for the two "Your Origin" slots — drop
+// left.* / right.* into public/images/users/andy/xbox-25/origin/ (see
+// that folder's README). Falls back to the built-in defaults below.
+const originLeftImage = findOriginImage("andy", "left");
+const originRightImage = findOriginImage("andy", "right");
+const originFullImage = findOriginImage("andy", "full");
 
 const boxArt = withBase("/images/users/andy/xbox-25/fallout-76.jpg");
 
@@ -345,31 +353,59 @@ const highlights = [
 
     <section class="xbox25-origin">
       <h2>Your Origin</h2>
-      <div class="origin-graphic">
-        <div class="origin-node">
-          <div class="origin-badge" aria-hidden="true">
-            <svg viewBox="0 0 48 48" fill="none">
-              <circle cx="24" cy="24" r="20.5" stroke="currentColor" stroke-width="2.5"></circle>
-              <circle cx="24" cy="24" r="12.5" stroke="currentColor" stroke-width="2.5"></circle>
-              <circle cx="24" cy="24" r="4" fill="currentColor"></circle>
-            </svg>
-          </div>
-          <span class="hero-eyebrow">Xbox Player Since</span>
-          <div class="origin-value">November 22, 2007</div>
+      {originFullImage ? (
+        <div class="origin-full">
+          <img src={originFullImage} alt="" loading="lazy" />
         </div>
-        <div class="origin-line" aria-hidden="true"></div>
-        <div class="origin-node">
-          <div class="origin-badge origin-badge-console" aria-hidden="true">
-            <svg viewBox="0 0 48 48" fill="none">
-              <rect x="6" y="16" width="36" height="17" rx="8.5" stroke="currentColor" stroke-width="2.5"></rect>
-              <circle cx="16.5" cy="24.5" r="2.3" fill="currentColor"></circle>
-              <circle cx="32" cy="20.8" r="1.9" fill="currentColor"></circle>
-              <circle cx="36" cy="24.5" r="1.9" fill="currentColor"></circle>
-              <circle cx="32" cy="28.2" r="1.9" fill="currentColor"></circle>
-            </svg>
+      ) : (
+        <div class="origin-graphic">
+          <div class="origin-node">
+            {originLeftImage ? (
+              <div class="origin-photo">
+                <img src={originLeftImage} alt="" loading="lazy" />
+              </div>
+            ) : (
+              <div class="origin-badge" aria-hidden="true">
+                <svg viewBox="0 0 48 48" fill="none">
+                  <circle cx="24" cy="24" r="20.5" stroke="currentColor" stroke-width="2.5"></circle>
+                  <circle cx="24" cy="24" r="12.5" stroke="currentColor" stroke-width="2.5"></circle>
+                  <circle cx="24" cy="24" r="4" fill="currentColor"></circle>
+                </svg>
+              </div>
+            )}
+            <span class="hero-eyebrow">Xbox Player Since</span>
+            <div class="origin-value">November 22, 2007</div>
           </div>
-          <span class="hero-eyebrow">Your First Console</span>
-          <div class="origin-value">Xbox 360</div>
+          <div class="origin-line" aria-hidden="true"></div>
+          <div class="origin-node">
+            <div class="origin-photo">
+              <img
+                src={originRightImage ?? withBase("/images/users/shared/xbox-360.png")}
+                alt={originRightImage ? "" : "Xbox 360 console"}
+                loading="lazy"
+              />
+            </div>
+            <span class="hero-eyebrow">Your First Console</span>
+            <div class="origin-value">Xbox 360</div>
+          </div>
+        </div>
+      )}
+      <div class="origin-owner-tools" id="origin-owner-tools" hidden>
+        <strong>Owner tools — choose your own images</strong>
+        <p>
+          Pick a picture for either slot above to preview it right here. Then
+          use "Save as file" and put that file in the folder named in the
+          README (left.png / right.png) and push, to make it live for everyone.
+          Only you see this panel (it appears when the address ends in
+          <code>?edit=1</code>).
+        </p>
+        <div class="owner-row">
+          <label class="owner-btn">Choose one wide image<input type="file" accept="image/*" data-slot="full" hidden /></label>
+          <a class="owner-save" data-save="full" hidden>Save as full.png</a>
+          <label class="owner-btn">Choose left image<input type="file" accept="image/*" data-slot="left" hidden /></label>
+          <a class="owner-save" data-save="left" hidden>Save as left.png</a>
+          <label class="owner-btn">Choose right image<input type="file" accept="image/*" data-slot="right" hidden /></label>
+          <a class="owner-save" data-save="right" hidden>Save as right.png</a>
         </div>
       </div>
       <div class="origin-milestones">
@@ -534,6 +570,62 @@ const highlights = [
     </div>
     </main>
   </div>
+
+  <script is:inline>
+    (function () {
+      // Owner-only picker for the "Your Origin" slots. Previews the chosen
+      // image in the page and offers it as a downloadable left.png/right.png
+      // (resized to <=640px) for the origin/ folder. Visitors never see it:
+      // the panel stays hidden unless the address has ?edit=1.
+      var panel = document.getElementById("origin-owner-tools");
+      if (!panel || !/[?&]edit=1/.test(location.search)) return;
+      panel.hidden = false;
+      var nodes = document.querySelectorAll(".origin-graphic .origin-node");
+      var slots = { left: nodes[0], right: nodes[nodes.length - 1] };
+      panel.querySelectorAll('input[type="file"]').forEach(function (input) {
+        input.addEventListener("change", function () {
+          var file = input.files && input.files[0];
+          if (!file) return;
+          var slot = input.getAttribute("data-slot");
+          var url = URL.createObjectURL(file);
+          var img = new Image();
+          img.onload = function () {
+            var scale = Math.min(1, (slot === "full" ? 1200 : 640) / Math.max(img.width, img.height));
+            var c = document.createElement("canvas");
+            c.width = Math.round(img.width * scale);
+            c.height = Math.round(img.height * scale);
+            c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+            var holder = document.createElement("div");
+            holder.className = "origin-photo";
+            var shown = document.createElement("img");
+            shown.src = url;
+            shown.alt = "";
+            holder.appendChild(shown);
+            if (slot === "full") {
+              var target = document.querySelector(".origin-graphic, .origin-full");
+              var wide = document.createElement("div");
+              wide.className = "origin-full";
+              var wideImg = document.createElement("img");
+              wideImg.src = url;
+              wideImg.alt = "";
+              wide.appendChild(wideImg);
+              target.replaceWith(wide);
+            } else {
+              var node = slots[slot];
+              node.replaceChild(holder, node.firstElementChild);
+            }
+            c.toBlob(function (blob) {
+              var a = panel.querySelector('[data-save="' + slot + '"]');
+              a.href = URL.createObjectURL(blob);
+              a.download = slot + ".png";
+              a.hidden = false;
+            }, "image/png");
+          };
+          img.src = url;
+        });
+      });
+    })();
+  </script>
 
   <script is:inline>
     (function () {

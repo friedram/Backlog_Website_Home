@@ -63,6 +63,14 @@
 // store pages.
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { withBase } from "../../../lib/site";
+import { findOriginImage } from "../../../lib/originImage";
+
+// Optional owner-chosen images for the two "Your Origin" slots — drop
+// left.* / right.* into public/images/users/gruffygrey/xbox-25/origin/ (see
+// that folder's README). Falls back to the built-in defaults below.
+const originLeftImage = findOriginImage("gruffygrey", "left");
+const originRightImage = findOriginImage("gruffygrey", "right");
+const originFullImage = findOriginImage("gruffygrey", "full");
 
 const boxArt = withBase("/images/users/gruffygrey/xbox-25/minecraft-for-windows-10.jpg");
 
@@ -179,6 +187,42 @@ const topGenres = [
   { label: "Simulation", pct: 6 },
   { label: "Other", pct: 14 },
 ];
+
+// Genre pictogram — same treatment as Andy's page (see his xbox-25.astro
+// for the fuller comment): a grid of small shapes, one per genre, sized
+// by percentage via largest-remainder rounding so it sums to exactly 70.
+const genreShapes = ["circle", "diamond", "triangle", "square", "plus"];
+const genreColors = ["var(--gold)", "var(--new)", "var(--ink)", "var(--gold-dim)", "var(--up)"];
+const PICTOGRAM_TOTAL = 70;
+function buildPictogram(items, total) {
+  const raw = items.map((it) => (it.pct / 100) * total);
+  const counts = raw.map(Math.floor);
+  let used = counts.reduce((a, b) => a + b, 0);
+  const order = raw
+    .map((r, i) => ({ i, remainder: r - counts[i] }))
+    .sort((a, b) => b.remainder - a.remainder);
+  let k = 0;
+  while (used < total && order.length > 0) {
+    counts[order[k % order.length].i] += 1;
+    used += 1;
+    k += 1;
+  }
+  const pieces = [];
+  items.forEach((it, i) => {
+    for (let n = 0; n < counts[i]; n++) {
+      pieces.push({
+        shape: genreShapes[i % genreShapes.length],
+        color: genreColors[i % genreColors.length],
+        label: it.label,
+      });
+    }
+  });
+  return pieces;
+}
+const genrePieces = buildPictogram(topGenres, PICTOGRAM_TOTAL);
+const genrePictogramLabel = `Genre breakdown: ${topGenres
+  .map((g) => `${g.label} ${g.pct}%`)
+  .join(", ")}`;
 
 // "Your Legacy" — rarest achievement, completion stats, and percentile
 // rings, from GruffyGrey's own screenshot of that section. The rings
@@ -321,14 +365,59 @@ const highlights = [
 
     <section class="xbox25-origin">
       <h2>Your Origin</h2>
-      <div class="origin-stats">
-        <div class="origin-stat">
-          <span class="hero-eyebrow">Xbox player since</span>
-          <div class="origin-value">November 15, 2010</div>
+      {originFullImage ? (
+        <div class="origin-full">
+          <img src={originFullImage} alt="" loading="lazy" />
         </div>
-        <div class="origin-stat">
-          <span class="hero-eyebrow">First console</span>
-          <div class="origin-value">Xbox 360</div>
+      ) : (
+        <div class="origin-graphic">
+          <div class="origin-node">
+            {originLeftImage ? (
+              <div class="origin-photo">
+                <img src={originLeftImage} alt="" loading="lazy" />
+              </div>
+            ) : (
+              <div class="origin-badge" aria-hidden="true">
+                <svg viewBox="0 0 48 48" fill="none">
+                  <circle cx="24" cy="24" r="20.5" stroke="currentColor" stroke-width="2.5"></circle>
+                  <circle cx="24" cy="24" r="12.5" stroke="currentColor" stroke-width="2.5"></circle>
+                  <circle cx="24" cy="24" r="4" fill="currentColor"></circle>
+                </svg>
+              </div>
+            )}
+            <span class="hero-eyebrow">Xbox Player Since</span>
+            <div class="origin-value">November 15, 2010</div>
+          </div>
+          <div class="origin-line" aria-hidden="true"></div>
+          <div class="origin-node">
+            <div class="origin-photo">
+              <img
+                src={originRightImage ?? withBase("/images/users/shared/xbox-360.png")}
+                alt={originRightImage ? "" : "Xbox 360 console"}
+                loading="lazy"
+              />
+            </div>
+            <span class="hero-eyebrow">Your First Console</span>
+            <div class="origin-value">Xbox 360</div>
+          </div>
+        </div>
+      )}
+      <div class="origin-owner-tools" id="origin-owner-tools" hidden>
+        <strong>Owner tools — choose your own images</strong>
+        <p>
+          Pick a picture for either slot above to preview it right here. Then
+          use "Save as file" and put that file in the folder named in the
+          README (left.png / right.png) and push, to make it live for everyone.
+          Only you see this panel (it appears when the address ends in
+          <code>?edit=1</code>).
+        </p>
+        <div class="owner-row">
+          <label class="owner-btn">Choose one wide image<input type="file" accept="image/*" data-slot="full" hidden /></label>
+          <a class="owner-save" data-save="full" hidden>Save as full.png</a>
+          <label class="owner-btn">Choose left image<input type="file" accept="image/*" data-slot="left" hidden /></label>
+          <a class="owner-save" data-save="left" hidden>Save as left.png</a>
+          <label class="owner-btn">Choose right image<input type="file" accept="image/*" data-slot="right" hidden /></label>
+          <a class="owner-save" data-save="right" hidden>Save as right.png</a>
         </div>
       </div>
       <div class="origin-milestones">
@@ -384,8 +473,13 @@ const highlights = [
         </div>
         <div class="journey-column">
           <h3>Top Genres</h3>
-          {topGenres.map((g) => (
+          {topGenres.map((g, i) => (
             <div class="stat-bar-row">
+              <span
+                class="stat-bar-swatch"
+                style={`background:${genreColors[i % genreColors.length]}`}
+                aria-hidden="true"
+              ></span>
               <span class="stat-bar-label">{g.label}</span>
               <span class="stat-bar-track">
                 <span class="stat-bar-fill" style={`width:${g.pct}%`}></span>
@@ -393,6 +487,15 @@ const highlights = [
               <span class="stat-bar-value">{g.pct}%</span>
             </div>
           ))}
+          <div class="genre-pictogram" role="img" aria-label={genrePictogramLabel}>
+            {genrePieces.map((p) => (
+              <span
+                class={`pictogram-piece shape-${p.shape}`}
+                style={`color:${p.color}`}
+                title={p.label}
+              ></span>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -475,6 +578,62 @@ const highlights = [
     </div>
     </main>
   </div>
+
+  <script is:inline>
+    (function () {
+      // Owner-only picker for the "Your Origin" slots. Previews the chosen
+      // image in the page and offers it as a downloadable left.png/right.png
+      // (resized to <=640px) for the origin/ folder. Visitors never see it:
+      // the panel stays hidden unless the address has ?edit=1.
+      var panel = document.getElementById("origin-owner-tools");
+      if (!panel || !/[?&]edit=1/.test(location.search)) return;
+      panel.hidden = false;
+      var nodes = document.querySelectorAll(".origin-graphic .origin-node");
+      var slots = { left: nodes[0], right: nodes[nodes.length - 1] };
+      panel.querySelectorAll('input[type="file"]').forEach(function (input) {
+        input.addEventListener("change", function () {
+          var file = input.files && input.files[0];
+          if (!file) return;
+          var slot = input.getAttribute("data-slot");
+          var url = URL.createObjectURL(file);
+          var img = new Image();
+          img.onload = function () {
+            var scale = Math.min(1, (slot === "full" ? 1200 : 640) / Math.max(img.width, img.height));
+            var c = document.createElement("canvas");
+            c.width = Math.round(img.width * scale);
+            c.height = Math.round(img.height * scale);
+            c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+            var holder = document.createElement("div");
+            holder.className = "origin-photo";
+            var shown = document.createElement("img");
+            shown.src = url;
+            shown.alt = "";
+            holder.appendChild(shown);
+            if (slot === "full") {
+              var target = document.querySelector(".origin-graphic, .origin-full");
+              var wide = document.createElement("div");
+              wide.className = "origin-full";
+              var wideImg = document.createElement("img");
+              wideImg.src = url;
+              wideImg.alt = "";
+              wide.appendChild(wideImg);
+              target.replaceWith(wide);
+            } else {
+              var node = slots[slot];
+              node.replaceChild(holder, node.firstElementChild);
+            }
+            c.toBlob(function (blob) {
+              var a = panel.querySelector('[data-save="' + slot + '"]');
+              a.href = URL.createObjectURL(blob);
+              a.download = slot + ".png";
+              a.hidden = false;
+            }, "image/png");
+          };
+          img.src = url;
+        });
+      });
+    })();
+  </script>
 
   <script is:inline>
     (function () {
