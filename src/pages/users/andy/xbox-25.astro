@@ -18,14 +18,17 @@
 // was the whole point of building this ourselves rather than just
 // linking his real archive.
 //
-// Content status (2026-11-13, updated 2026-11-14): the #1 most-played
-// game, Your Origin (join date, first console, first achievement),
-// three "Other Favorites" ranks (5-7), and three category highlights
-// (Highest Gamerscore / Highest Achievements / Most Sessions) are now
-// confirmed, from screenshots Andy sent. Ranks 2-4 and 8+ and total
-// hours/achievement counts are still pending — see the pending-panel
-// below. Do not invent those; replace the pending-panel once he sends
-// them.
+// Content status (2026-11-13, updated 2026-11-14 three times — round 4,
+// round 7, and round 8): the #1 most-played game (now with its full
+// stat line and Gamerscore ring), Your Origin, Your Journey (lifetime
+// totals, best years, where he played, top genres), all nine "Other
+// Favorites" ranks (2-10, complete as of round 8), three category
+// highlights, and Your Legacy (rarest achievement, completion stats,
+// percentile rings) are all confirmed from real screenshots of Andy's
+// own Playback Archive. His overall achievement count across every
+// game (as opposed to Fallout 76's own count) is the one remaining
+// pending item — see the pending-panel below. Do not invent it; replace
+// the pending-panel once he sends it.
 //
 // Visual treatment (2026-11-14): a full-bleed animated line backdrop
 // behind the top of the page and a bold centered stat callout, matching
@@ -51,6 +54,21 @@ const boxArt = withBase("/images/users/andy/xbox-25/fallout-76.jpg");
 
 const otherFavorites = [
   {
+    rank: 2,
+    title: "Diablo IV",
+    image: "diablo-4.jpg",
+  },
+  {
+    rank: 3,
+    title: "DOOM: The Dark Ages",
+    image: "doom-the-dark-ages.jpg",
+  },
+  {
+    rank: 4,
+    title: "Stellaris: Console Edition",
+    image: "stellaris-console-edition.jpg",
+  },
+  {
     rank: 5,
     title: "Age of Empires: Castle Siege",
     image: "age-of-empires-castle-siege.jpg",
@@ -65,6 +83,86 @@ const otherFavorites = [
     title: "Mass Effect 3",
     image: "mass-effect-3.jpg",
   },
+  {
+    rank: 8,
+    title: "Warhammer 40,000: Darktide",
+    image: "warhammer-40k-darktide.jpg",
+  },
+  {
+    rank: 9,
+    title: "Mass Effect 2",
+    image: "mass-effect-2.jpg",
+  },
+  {
+    rank: 10,
+    title: "Mass Effect: Andromeda",
+    image: "mass-effect-andromeda.jpg",
+  },
+];
+
+// Fallout 76's full stat line + Gamerscore ring, from Andy's "#1 Most
+// Played Game" screenshot.
+const falloutStats = {
+  timePlayed: "2,140h",
+  gamerscore: "1,330",
+  achievements: "63",
+  topAchievement: "I Am Become Death",
+  gamerscorePct: 84,
+};
+
+// "Your Journey" — lifetime totals and best years, from Andy's own
+// screenshot of that section.
+const journeyStats = [
+  { label: "Total Playing Time", value: "14,259h" },
+  { label: "Total Games Played", value: "1,218" },
+  { label: "Top Genre", value: "Role Playing" },
+];
+const journeyYears = [
+  { label: "Year With Most Play Time", value: "2026", sub: "2,042h" },
+  { label: "Year With Highest Gamerscore", value: "2025", sub: "31,167" },
+  { label: "Year With Most Games Played", value: "2025", sub: "234 games" },
+];
+const wherePlayed = [
+  { label: "Console", hours: 10081 },
+  { label: "PC", hours: 2637 },
+  { label: "Mobile", hours: 429 },
+  { label: "Cloud", hours: 114 },
+];
+const wherePlayedMax = Math.max(...wherePlayed.map((w) => w.hours));
+const topGenres = [
+  { label: "Role Playing", pct: 32 },
+  { label: "Action & Adventure", pct: 26 },
+  { label: "Shooter", pct: 23 },
+  { label: "Strategy", pct: 8 },
+  { label: "Other", pct: 11 },
+];
+
+// "Your Legacy" — rarest achievement, completion stats, and percentile
+// rings, from Andy's own screenshot of that section. The rings show
+// how full the circle is, not the raw "top X%" figure directly — a
+// "top 0.1%" ring reads as 99.9% filled (nearly whole, tiny gap),
+// matching how Xbox's own page draws it.
+const legacyStats = [
+  {
+    label: "Rarest Achievement",
+    value: "The Illustrious",
+    sub: "MechWarrior 5: Clans · Unlocked June 21, 2025",
+  },
+  {
+    label: "Games Completed",
+    value: "23",
+    sub: "with 100% achievements unlocked",
+  },
+  {
+    label: "Longest Play Streak",
+    value: "397 Days",
+    sub: "October 10, 2025 – November 10, 2026",
+  },
+];
+const legacyPercentiles = [
+  { label: "Achievements unlocked", topPct: 0.1 },
+  { label: "Gamerscore", topPct: 0.1 },
+  { label: "Time played", topPct: 0.6 },
 ];
 
 const highlights = [
@@ -135,6 +233,32 @@ const highlights = [
             The #1 game in Andy's Playback Archive — more hours sunk into
             Appalachia than anywhere else on Xbox.
           </p>
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <span class="hero-stat-label">Total time played</span>
+              <span class="hero-stat-value">{falloutStats.timePlayed}</span>
+            </div>
+            <div class="hero-stat">
+              <span class="hero-stat-label">Total Gamerscore</span>
+              <span class="hero-stat-value">{falloutStats.gamerscore}</span>
+            </div>
+            <div class="hero-stat">
+              <span class="hero-stat-label">Total achievements</span>
+              <span class="hero-stat-value">{falloutStats.achievements}</span>
+            </div>
+            <div class="hero-stat">
+              <span class="hero-stat-label">Top achievement</span>
+              <span class="hero-stat-value">{falloutStats.topAchievement}</span>
+            </div>
+          </div>
+          <div class="hero-ring-wrap">
+            <div class="ring" style={`--pct:${falloutStats.gamerscorePct}`}>
+              <span class="ring-value">{falloutStats.gamerscorePct}%</span>
+            </div>
+            <p class="ring-caption">
+              of the possible Gamerscore earned in Fallout 76.
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -171,11 +295,60 @@ const highlights = [
       </div>
     </section>
 
+    <section class="xbox25-journey">
+      <h2>Your Journey</h2>
+      <div class="journey-stats">
+        {journeyStats.map((s) => (
+          <div class="origin-stat">
+            <span class="hero-eyebrow">{s.label}</span>
+            <div class="origin-value">{s.value}</div>
+          </div>
+        ))}
+      </div>
+      <div class="journey-stats journey-years">
+        {journeyYears.map((y) => (
+          <div class="origin-stat">
+            <span class="hero-eyebrow">{y.label}</span>
+            <div class="origin-value">{y.value}</div>
+            <div class="origin-subvalue">{y.sub}</div>
+          </div>
+        ))}
+      </div>
+      <div class="journey-split">
+        <div class="journey-column">
+          <h3>Where You Played</h3>
+          {wherePlayed.map((w) => (
+            <div class="stat-bar-row">
+              <span class="stat-bar-label">{w.label}</span>
+              <span class="stat-bar-track">
+                <span
+                  class="stat-bar-fill"
+                  style={`width:${Math.round((w.hours / wherePlayedMax) * 100)}%`}
+                ></span>
+              </span>
+              <span class="stat-bar-value">{w.hours.toLocaleString()}h</span>
+            </div>
+          ))}
+        </div>
+        <div class="journey-column">
+          <h3>Top Genres</h3>
+          {topGenres.map((g) => (
+            <div class="stat-bar-row">
+              <span class="stat-bar-label">{g.label}</span>
+              <span class="stat-bar-track">
+                <span class="stat-bar-fill" style={`width:${g.pct}%`}></span>
+              </span>
+              <span class="stat-bar-value">{g.pct}%</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
     <section class="xbox25-favorites">
       <h2>Other Favorites</h2>
       <p class="section-note">
-        Ranks 5–7 as Xbox's archive listed them. Scroll or use the arrows —
-        more may land here as the rest of the list comes in.
+        Ranks 2–10 as Xbox's archive listed them. Scroll or use the arrows.
       </p>
       <div class="scroll-row-wrap">
         <button class="scroll-arrow prev" type="button" aria-label="Scroll left">‹</button>
@@ -213,13 +386,39 @@ const highlights = [
       </div>
     </section>
 
+    <section class="xbox25-legacy">
+      <h2>Your Legacy</h2>
+      <div class="legacy-stats">
+        {legacyStats.map((s) => (
+          <div class="origin-stat">
+            <span class="hero-eyebrow">{s.label}</span>
+            <div class="origin-value">{s.value}</div>
+            <div class="origin-subvalue">{s.sub}</div>
+          </div>
+        ))}
+      </div>
+      <div class="legacy-rings">
+        {legacyPercentiles.map((p) => (
+          <div class="legacy-ring-tile">
+            <div class="ring" style={`--pct:${100 - p.topPct}`}>
+              <span class="ring-value">{p.topPct}%</span>
+            </div>
+            <p>
+              You're in the <strong>top {p.topPct}%</strong> of players for{" "}
+              {p.label}.
+            </p>
+          </div>
+        ))}
+      </div>
+    </section>
+
     <div class="pending-panel">
       <strong>More of this story is on its way.</strong>
       <p>
-        Xbox's archive also covers Andy's total hours played and overall
-        achievement count, plus ranks 2–4 and 8+ of his favorites list.
-        Those land here once that data's been pulled together — nothing
-        here is getting invented in the meantime.
+        Still pending: Andy's overall achievement count across every game
+        (Fallout 76's own count above is confirmed — this is the
+        career-wide total). That lands here once it's been pulled
+        together — nothing here is getting invented in the meantime.
       </p>
     </div>
     </main>
@@ -240,6 +439,22 @@ const highlights = [
       }
       if (prev) prev.addEventListener("click", function () { scrollByAmount(-1); });
       if (next) next.addEventListener("click", function () { scrollByAmount(1); });
+
+      // The arrows only mean anything once the row actually has more
+      // content than fits — with just a handful of cards the row is
+      // narrower than its wrapper, so an arrow pinned to the wrapper's
+      // edge floats past the last real card instead of sitting next to
+      // it, and clicking it does nothing because there's nothing left
+      // to scroll to. Hide both arrows until the row genuinely
+      // overflows (more favorites land, or the viewport narrows), and
+      // recheck on resize since that can flip either way.
+      function updateArrowVisibility() {
+        var scrollable = row.scrollWidth > row.clientWidth + 1;
+        if (prev) prev.style.display = scrollable ? "" : "none";
+        if (next) next.style.display = scrollable ? "" : "none";
+      }
+      updateArrowVisibility();
+      window.addEventListener("resize", updateArrowVisibility);
     })();
   </script>
 

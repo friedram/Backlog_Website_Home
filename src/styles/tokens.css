@@ -1249,6 +1249,181 @@ a:hover { color: #f2c869; }
   .origin-achievement { flex-direction: column; align-items: flex-start; }
 }
 
+/*
+  Xbox 25 page, 2026-11-14 (round 7): real numbers from Andy's actual
+  Playback Archive — Fallout 76's full stat line + Gamerscore ring in
+  the hero panel, a new "Your Journey" section (lifetime totals, best
+  years, where he played, top genres), and a "Your Legacy" section
+  (rarest achievement, completion stats, percentile rings) near the
+  end. Same rule as everywhere else on this page: real data only, nothing
+  invented — these are the exact figures from his screenshots.
+*/
+.hero-stats {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px 32px;
+}
+.hero-stat { display: flex; flex-direction: column; gap: 4px; }
+.hero-stat-label {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.hero-stat-value {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--ink);
+}
+.hero-ring-wrap {
+  margin-top: 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.ring {
+  --pct: 0;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  background: conic-gradient(var(--gold) calc(var(--pct) * 1%), var(--bg-elevated) 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.ring::before {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border-radius: 50%;
+  background: var(--bg-elevated-2);
+}
+/* The hero ring sits over the heavily-scrimmed photo backdrop, which by
+   that point in the gradient is nearly solid var(--bg) — match that
+   instead of the flat card color so the donut hole doesn't look like a
+   mismatched patch. The legacy tiles sit on a flat var(--bg-elevated)
+   card, so their ring hole matches that card directly. */
+.hero-ring-wrap .ring::before { background: var(--bg); }
+.legacy-ring-tile .ring::before { background: var(--bg-elevated); }
+.ring-value {
+  position: relative;
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 1rem;
+  color: var(--ink);
+}
+.ring-caption {
+  color: var(--ink-2);
+  font-size: 0.88rem;
+  max-width: 20rem;
+  margin: 0;
+}
+
+.xbox25-journey { margin-top: 40px; }
+.xbox25-journey h2 { font-size: clamp(1.4rem, 3vw, 1.8rem); }
+.journey-stats {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.journey-years { margin-top: 16px; }
+.origin-subvalue {
+  margin-top: 4px;
+  color: var(--ink-3);
+  font-size: 0.85rem;
+}
+.journey-split {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+.journey-column h3 {
+  font-size: 1rem;
+  color: var(--ink-2);
+  margin: 0 0 14px;
+}
+.stat-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.stat-bar-label {
+  flex: 0 0 110px;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  color: var(--ink-2);
+}
+.stat-bar-track {
+  flex: 1;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  overflow: hidden;
+}
+.stat-bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--gold);
+}
+.stat-bar-value {
+  flex: 0 0 auto;
+  min-width: 56px;
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  color: var(--ink);
+}
+
+.xbox25-legacy { margin-top: 40px; }
+.xbox25-legacy h2 { font-size: clamp(1.4rem, 3vw, 1.8rem); }
+.legacy-stats {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.legacy-rings {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.legacy-ring-tile {
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 20px;
+  background: var(--bg-elevated);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+}
+.legacy-ring-tile .ring { width: 108px; height: 108px; }
+.legacy-ring-tile .ring-value { font-size: 1.15rem; }
+.legacy-ring-tile p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--ink-2);
+}
+.legacy-ring-tile p strong { color: var(--gold); }
+@media (max-width: 640px) {
+  .journey-stats,
+  .legacy-stats,
+  .legacy-rings { grid-template-columns: 1fr; }
+  .journey-split { grid-template-columns: 1fr; gap: 24px; }
+  .stat-bar-label { flex-basis: 90px; }
+}
+
 .podcast-list {
   margin-top: 32px;
   display: flex;
