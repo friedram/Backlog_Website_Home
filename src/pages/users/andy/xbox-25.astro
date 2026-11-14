@@ -1,0 +1,180 @@
+---
+// Andy's "Xbox 25" page — a hand-authored personal retrospective for
+// Xbox's 25th anniversary (November 15, 2026), nested under the Andy
+// entry in Users (see BaseLayout.astro's .submenu-nested and
+// users/index.astro's .subpage-links-nested). Not a live Xbox-API
+// dashboard — consistent with this project's "favor maintainability,
+// assume a single content creator" rule, this is a plain page Andy
+// (or a future Claude session) edits by hand as he sends more data.
+//
+// Xbox's own feature is called the "Playback Archive." This page
+// pulls real facts from Andy's own archive but is written in this
+// site's own voice and built from its own dark/gold tokens.css system
+// rather than cloning Xbox's green-branded UI — same "inspired by, not
+// cloned" convention the rest of the site already follows.
+//
+// Andy's real gamertag never appears here. Everywhere this page would
+// show it, it shows "Andy" instead, per his explicit request — that
+// was the whole point of building this ourselves rather than just
+// linking his real archive.
+//
+// Content status (2026-11-13, updated same day): the #1 most-played
+// game, three "Other Favorites" ranks (5-7), and three category
+// highlights (Highest Gamerscore / Highest Achievements / Most
+// Sessions) are now confirmed, from the two screenshots Andy sent.
+// Ranks 2-4 and 8+, "Your Origin," and total hours/achievement counts
+// are still pending — see the pending-panel below. Do not invent
+// those; replace the pending-panel once he sends them.
+//
+// Box art for the three "Other Favorites" games (Rogue Trader, Mass
+// Effect 3, Mass Effect Legendary Edition) is reused from the Ranked
+// Games repo's own game entries, already vetted there. Halo: The
+// Master Chief Collection and Age of Empires: Castle Siege were
+// sourced fresh from Xbox's own store/press assets for this page (the
+// Castle Siege art is a cropped promo screenshot, not box art — that
+// discontinued mobile/XBLA title never had traditional packaging).
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { withBase } from "../../../lib/site";
+
+const boxArt = withBase("/images/users/andy/xbox-25/fallout-76.jpg");
+
+const otherFavorites = [
+  {
+    rank: 5,
+    title: "Age of Empires: Castle Siege",
+    image: "age-of-empires-castle-siege.jpg",
+  },
+  {
+    rank: 6,
+    title: "Warhammer 40,000: Rogue Trader",
+    image: "warhammer-40k-rogue-trader.png",
+  },
+  {
+    rank: 7,
+    title: "Mass Effect 3",
+    image: "mass-effect-3.jpg",
+  },
+];
+
+const highlights = [
+  {
+    label: "Highest Gamerscore",
+    title: "Mass Effect Legendary Edition",
+    image: "mass-effect-legendary-edition.jpg",
+  },
+  {
+    label: "Highest Achievements",
+    title: "Halo: The Master Chief Collection",
+    image: "halo-mcc.jpg",
+  },
+  {
+    label: "Most Sessions",
+    title: 'Fallout 76 · "The Slasher"',
+    image: "fallout-76.jpg",
+  },
+];
+---
+<BaseLayout
+  title="Xbox 25 — Andy"
+  description="Andy's personal look back at 25 years of Xbox, built from his own Xbox Playback Archive."
+>
+  <main class="wrap simple-page xbox25-page">
+    <span class="kicker">Users · Andy</span>
+    <h1>25 Years of Xbox, My Way</h1>
+    <p class="lede">
+      Xbox turns 25 on November 15, 2026, and to mark it they built every
+      player a personal "Playback Archive" — stats and milestones pulled from
+      years of play. This is Andy's version of that, with the real gamertag
+      swapped out for "Andy" so it stays about the games, not the handle.
+    </p>
+
+    <div class="hero-panel">
+      <div class="backdrop" style={`background-image:url(${boxArt})`}></div>
+      <div class="scrim"></div>
+      <div class="content">
+        <img class="art" src={boxArt} alt="Fallout 76 box art" />
+        <div>
+          <span class="hero-eyebrow">Most played</span>
+          <h2>Fallout 76</h2>
+          <p class="hero-meta">
+            Xbox's archive tagged Andy's playstyle here as "The Slasher."
+          </p>
+          <p class="hero-take">
+            The #1 game in Andy's Playback Archive — more hours sunk into
+            Appalachia than anywhere else on Xbox.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <section class="xbox25-favorites">
+      <h2>Other Favorites</h2>
+      <p class="section-note">
+        Ranks 5–7 as Xbox's archive listed them. Scroll or use the arrows —
+        more may land here as the rest of the list comes in.
+      </p>
+      <div class="scroll-row-wrap">
+        <button class="scroll-arrow prev" type="button" aria-label="Scroll left">‹</button>
+        <ul class="scroll-row" id="favorites-row">
+          {otherFavorites.map((game) => (
+            <li class="favorite-card">
+              <img
+                src={withBase(`/images/users/andy/xbox-25/${game.image}`)}
+                alt={`${game.title} box art`}
+                loading="lazy"
+              />
+              <span class="favorite-rank">{game.rank}</span>
+              <span class="favorite-title">{game.title}</span>
+            </li>
+          ))}
+        </ul>
+        <button class="scroll-arrow next" type="button" aria-label="Scroll right">›</button>
+      </div>
+    </section>
+
+    <section class="xbox25-highlights">
+      <h2>Category Highlights</h2>
+      <div class="highlight-grid">
+        {highlights.map((h) => (
+          <div class="highlight-tile">
+            <span class="hero-eyebrow">{h.label}</span>
+            <img
+              src={withBase(`/images/users/andy/xbox-25/${h.image}`)}
+              alt={`${h.title} box art`}
+              loading="lazy"
+            />
+            <p class="highlight-title">{h.title}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <div class="pending-panel">
+      <strong>More of this story is on its way.</strong>
+      <p>
+        Xbox's archive also covers Andy's origin story, total hours played,
+        and overall achievement counts, plus ranks 2–4 and 8+ of his
+        favorites list. Those land here once that data's been pulled
+        together — nothing here is getting invented in the meantime.
+      </p>
+    </div>
+  </main>
+
+  <script is:inline>
+    (function () {
+      // Horizontal scroll row for "Other Favorites" — plain native
+      // overflow-x scrolling (works with touch/trackpad on its own;
+      // the arrow buttons are just a convenience, same philosophy as
+      // the hero rotator's dots: simple, no extra library).
+      var row = document.getElementById("favorites-row");
+      if (!row) return;
+      var prev = document.querySelector(".scroll-arrow.prev");
+      var next = document.querySelector(".scroll-arrow.next");
+      function scrollByAmount(dir) {
+        row.scrollBy({ left: row.clientWidth * 0.8 * dir, behavior: "smooth" });
+      }
+      if (prev) prev.addEventListener("click", function () { scrollByAmount(-1); });
+      if (next) next.addEventListener("click", function () { scrollByAmount(1); });
+    })();
+  </script>
+</BaseLayout>
