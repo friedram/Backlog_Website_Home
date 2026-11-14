@@ -58,7 +58,7 @@
 // Andy's own screenshots — see originMilestones below.
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { withBase } from "../../../lib/site";
-import { findOriginImage } from "../../../lib/originImage";
+import { findOriginImage, listOriginExtras } from "../../../lib/originImage";
 
 // Optional owner-chosen images for the two "Your Origin" slots — drop
 // left.* / right.* into public/images/users/andy/xbox-25/origin/ (see
@@ -66,6 +66,7 @@ import { findOriginImage } from "../../../lib/originImage";
 const originLeftImage = findOriginImage("andy", "left");
 const originRightImage = findOriginImage("andy", "right");
 const originFullImage = findOriginImage("andy", "full");
+const originExtras = listOriginExtras("andy");
 
 const boxArt = withBase("/images/users/andy/xbox-25/fallout-76.jpg");
 
@@ -353,6 +354,13 @@ const highlights = [
 
     <section class="xbox25-origin">
       <h2>Your Origin</h2>
+      {originExtras.length > 0 && (
+        <div class="origin-extra">
+          {originExtras.map((src) => (
+            <img src={src} alt="" loading="lazy" />
+          ))}
+        </div>
+      )}
       {originFullImage ? (
         <div class="origin-full">
           <img src={originFullImage} alt="" loading="lazy" />

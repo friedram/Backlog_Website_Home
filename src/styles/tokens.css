@@ -1819,5 +1819,8 @@ a:hover { color: #f2c869; }
 .owner-save[hidden] { display: none; }
 
 /* Round 17: one wide owner-chosen picture replacing the whole Your Origin graphic */
+/* Extra pictures directly under the Your Origin heading (above the graphic). */
+.origin-extra { margin-top: 20px; display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; }
+.origin-extra img { max-width: 100%; max-height: 420px; width: auto; height: auto; display: block; border-radius: 12px; }
 .origin-full { margin-top: 24px; display: flex; justify-content: center; }
 .origin-full img { width: 100%; max-width: 640px; height: auto; display: block; border-radius: 12px; }

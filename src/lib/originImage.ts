@@ -8,6 +8,11 @@
 //   .../origin/full.(png|jpg|...)   - ONE wide picture that replaces the whole
 //                                       graphic (use this for a single combined image)
 //
+//   .../origin/extra/*.(png|jpg|...) - any number of EXTRA pictures shown
+//                                       right under the "Your Origin" heading,
+//                                       ABOVE the existing graphic (which stays).
+//                                       Shown in filename order (01-, 02-, ...).
+//
 // "left" is the slot next to "Player Since", "right" the one next to
 // "First Console". If a file is there it replaces the default for that slot;
 // if not, the page falls back to its built-in default. Delete the file to
@@ -26,4 +31,16 @@ export function findOriginImage(user: string, slot: "left" | "right" | "full"): 
     }
   }
   return null;
+}
+
+// Extra pictures shown immediately under the "Your Origin" heading, in
+// filename order. Returns [] when the folder is missing or empty.
+export function listOriginExtras(user: string): string[] {
+  const dir = path.join(process.cwd(), "public", "images", "users", user, "xbox-25", "origin", "extra");
+  if (!fs.existsSync(dir)) return [];
+  return fs
+    .readdirSync(dir)
+    .filter((f) => EXTENSIONS.includes(f.split(".").pop()!.toLowerCase()))
+    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+    .map((f) => withBase(`/images/users/${user}/xbox-25/origin/extra/${encodeURIComponent(f)}`));
 }
