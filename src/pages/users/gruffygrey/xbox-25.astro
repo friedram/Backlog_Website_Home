@@ -194,7 +194,8 @@ const topGenres = [
 // by percentage via largest-remainder rounding so it sums to exactly 70.
 const genreShapes = ["circle", "diamond", "triangle", "square", "plus"];
 const genreColors = ["var(--gold)", "var(--new)", "var(--ink)", "var(--gold-dim)", "var(--up)"];
-const PICTOGRAM_TOTAL = 70;
+// 100 pieces in a 10 x 10 square: every piece is exactly 1%, every full row is 10%.
+const PICTOGRAM_TOTAL = 100;
 function buildPictogram(items, total) {
   const raw = items.map((it) => (it.pct / 100) * total);
   const counts = raw.map(Math.floor);
@@ -485,13 +486,13 @@ const highlights = [
           {topGenres.map((g, i) => (
             <div class="stat-bar-row">
               <span
-                class="stat-bar-swatch"
-                style={`background:${genreColors[i % genreColors.length]}`}
+                class={`stat-bar-swatch pictogram-piece shape-${genreShapes[i % genreShapes.length]}`}
+                style={`color:${genreColors[i % genreColors.length]}`}
                 aria-hidden="true"
               ></span>
               <span class="stat-bar-label">{g.label}</span>
               <span class="stat-bar-track">
-                <span class="stat-bar-fill" style={`width:${g.pct}%`}></span>
+                <span class="stat-bar-fill" style={`width:${g.pct}%;background:${genreColors[i % genreColors.length]}`}></span>
               </span>
               <span class="stat-bar-value">{g.pct}%</span>
             </div>

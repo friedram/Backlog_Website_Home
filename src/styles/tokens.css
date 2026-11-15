@@ -1452,10 +1452,9 @@ a:hover { color: #f2c869; }
   margin-bottom: 10px;
 }
 .stat-bar-swatch {
+  /* legend marker: same shape + color as the genre's pieces in the grid below */
+  --piece: 13px;
   flex: 0 0 auto;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
 }
 .stat-bar-label {
   flex: 0 0 110px;
@@ -1486,47 +1485,53 @@ a:hover { color: #f2c869; }
 }
 
 /*
-  Round 12 (2026-11-14): genre pictogram — a grid of small shapes under
-  the Top Genres bars, one shape+color per genre, counted so the tally
-  of pieces matches each genre's share (70 pieces total, largest-
-  remainder rounding in the frontmatter). Plain CSS shapes, no images.
+  Genre pictogram — a SQUARE grid of small shapes under the Top Genres
+  bars (round 23): 10 x 10 = 100 pieces, so every piece is exactly 1% and
+  every full row is 10%. One shape+color per genre, filled row by row in
+  genre order (largest-remainder rounding in the frontmatter). The same
+  .pictogram-piece shapes are reused for the legend marker beside each
+  bar (.stat-bar-swatch), so the shape you see next to "Other" is the
+  shape you count below. Plain CSS shapes sized from --piece, no images.
 */
 .genre-pictogram {
-  margin-top: 14px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  max-width: 19rem;
+  --piece: 18px;
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(10, var(--piece));
+  gap: 6px;
+  width: max-content;
+  max-width: 100%;
 }
 .pictogram-piece {
-  width: 13px;
-  height: 13px;
+  position: relative;
+  display: block;
+  width: var(--piece);
+  height: var(--piece);
   flex: 0 0 auto;
   background: currentColor;
 }
 .pictogram-piece.shape-circle { border-radius: 50%; }
-.pictogram-piece.shape-square { border-radius: 2px; }
-.pictogram-piece.shape-diamond { border-radius: 2px; transform: rotate(45deg); }
-.pictogram-piece.shape-triangle {
-  width: 0;
-  height: 0;
-  background: none;
-  border-left: 6.5px solid transparent;
-  border-right: 6.5px solid transparent;
-  border-bottom: 13px solid currentColor;
+.pictogram-piece.shape-square { border-radius: 3px; }
+.pictogram-piece.shape-diamond { background: none; }
+.pictogram-piece.shape-diamond::before {
+  content: "";
+  position: absolute;
+  inset: 14.6%;
+  background: currentColor;
+  border-radius: 2px;
+  transform: rotate(45deg);
 }
-.pictogram-piece.shape-plus {
-  position: relative;
-  background: none;
-}
+.pictogram-piece.shape-triangle { clip-path: polygon(50% 6%, 100% 94%, 0 94%); }
+.pictogram-piece.shape-plus { background: none; }
 .pictogram-piece.shape-plus::before,
 .pictogram-piece.shape-plus::after {
   content: "";
   position: absolute;
   background: currentColor;
+  border-radius: 1px;
 }
-.pictogram-piece.shape-plus::before { left: 5px; right: 5px; top: 0; bottom: 0; }
-.pictogram-piece.shape-plus::after { top: 5px; bottom: 5px; left: 0; right: 0; }
+.pictogram-piece.shape-plus::before { inset: 0 33%; }
+.pictogram-piece.shape-plus::after { inset: 33% 0; }
 
 .xbox25-legacy { margin-top: 40px; }
 .xbox25-legacy h2 { font-size: clamp(1.4rem, 3vw, 1.8rem); }
