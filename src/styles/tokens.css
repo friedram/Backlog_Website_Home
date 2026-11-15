@@ -1914,3 +1914,9 @@ a:hover { color: #f2c869; }
   .ogx-pager { grid-template-columns: 1fr 1fr; }
   .ogx-pager-pos { grid-column: 1 / -1; grid-row: 1; text-align: center; }
 }
+/* Round 22: link under the Original Xbox photo in "Your Origin". */
+.origin-link { display: inline-block; margin-top: 8px; font-family: var(--mono); font-size: 0.8rem; color: var(--gold); text-decoration: none; border-bottom: 1px solid transparent; }
+.origin-link:hover, .origin-link:focus-visible { border-bottom-color: var(--gold); }
+.origin-link:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+/* Top-align the two origin nodes so the extra link line under the console does not push the left node off-line. */
+@media (min-width: 641px) { .origin-graphic { align-items: flex-start; } }

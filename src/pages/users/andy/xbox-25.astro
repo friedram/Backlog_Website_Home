@@ -382,19 +382,20 @@ const highlights = [
               </div>
             )}
             <span class="hero-eyebrow">Xbox Player Since</span>
-            <div class="origin-value">November 22, 2007</div>
+            <div class="origin-value">July 21, 2003</div>
           </div>
           <div class="origin-line" aria-hidden="true"></div>
           <div class="origin-node">
             <div class="origin-photo">
               <img
-                src={originRightImage ?? withBase("/images/users/shared/xbox-360.png")}
-                alt={originRightImage ? "" : "Xbox 360 console"}
+                src={originRightImage ?? withBase("/images/users/shared/xbox-original.png")}
+                alt={originRightImage ? "" : "Original Xbox console with controller"}
                 loading="lazy"
               />
             </div>
             <span class="hero-eyebrow">Your First Console</span>
-            <div class="origin-value">Xbox 360</div>
+            <div class="origin-value">Original Xbox</div>
+            <a class="origin-link" href={withBase("/users/andy/original-xbox/")}>See my Original Xbox games →</a>
           </div>
         </div>
       )}
