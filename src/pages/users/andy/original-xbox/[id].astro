@@ -1,0 +1,105 @@
+---
+// One page per Original Xbox game, built from src/lib/andyOriginalXbox.ts.
+// Adding a game to that list automatically adds its page. Optional hi-res
+// cover: public/images/users/andy/original-xbox/<id>-large.jpg (or .png/.webp).
+// Extra pictures: any images in public/images/users/andy/original-xbox/<id>/
+// (a folder named like the game's id) appear as a gallery under the description.
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import { withBase } from "../../../../lib/site";
+import { findGameArt, listGameExtras } from "../../../../lib/gameArt";
+import { sortedOriginalXboxGames } from "../../../../lib/andyOriginalXbox";
+
+export function getStaticPaths() {
+  const list = sortedOriginalXboxGames;
+  return list.map((game, i) => ({
+    params: { id: game.id },
+    props: {
+      game,
+      index: i,
+      total: list.length,
+      prev: list[(i - 1 + list.length) % list.length],
+      next: list[(i + 1) % list.length],
+    },
+  }));
+}
+
+const { game, index, total, prev, next } = Astro.props;
+const ART_FOLDER = "users/andy/original-xbox";
+const art = findGameArt(ART_FOLDER, game.id);
+const large = findGameArt(ART_FOLDER, `${game.id}-large`) ?? art;
+const extras = listGameExtras(ART_FOLDER, game.id);
+const shelf = withBase("/users/andy/original-xbox/");
+const gameUrl = (id: string) => withBase(`/users/andy/original-xbox/${id}/`);
+const meta = [game.year, game.genre].filter(Boolean).join(" · ");
+const pageDescription =
+  game.description ?? `${game.title} on the Original Xbox, from Andy's collection.`;
+---
+<BaseLayout title={`${game.title} — Original Xbox — Andy`} description={pageDescription}>
+  <main class="wrap simple-page ogx-page ogx-gamepage">
+    <div class="xbox25-topbar">
+      <span class="kicker">Users · Andy · Original Xbox</span>
+      <a class="ogx-back" href={shelf}>← Back to the shelf</a>
+    </div>
+
+    <article class="ogx-game">
+      <div class="ogx-game-art">
+        {large ? (
+          <img src={large} alt={`${game.title} box art`} />
+        ) : (
+          <div class="ogx-placeholder"><span>{game.title}</span></div>
+        )}
+      </div>
+      <div class="ogx-game-body">
+        {meta && <p class="ogx-game-meta">{meta}</p>}
+        <h1 class="ogx-game-title">{game.title}</h1>
+        {game.note && <p class="ogx-game-edition">{game.note}</p>}
+        {game.platforms && game.platforms.length > 0 && (
+          <ul class="ogx-chips" aria-label="Platforms">
+            {game.platforms.map((p) => <li>{p}</li>)}
+          </ul>
+        )}
+        {game.description && <p class="ogx-game-desc">{game.description}</p>}
+        {(game.year || game.developer || game.publisher) && (
+          <dl class="ogx-facts">
+            {game.year && (<><dt>Released</dt><dd>{game.year}</dd></>)}
+            {game.developer && (<><dt>Developer</dt><dd>{game.developer}</dd></>)}
+            {game.publisher && (<><dt>Publisher</dt><dd>{game.publisher}</dd></>)}
+          </dl>
+        )}
+        <p class="ogx-game-owned">From my own Original Xbox collection.</p>
+      </div>
+    </article>
+
+    {extras.length > 0 && (
+      <section class="ogx-gallery" aria-label={`More pictures of ${game.title}`}>
+        <h2>More pictures</h2>
+        <ul>
+          {extras.map((src, i) => (
+            <li>
+              <a href={src} target="_blank" rel="noopener">
+                <img src={src} alt={`${game.title} — picture ${i + 1}`} loading="lazy" />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <nav class="ogx-pager" aria-label="More Original Xbox games">
+      <a class="ogx-pager-prev" rel="prev" href={gameUrl(prev.id)}><span>← Previous</span><strong>{prev.title}</strong></a>
+      <span class="ogx-pager-pos">{index + 1} of {total}</span>
+      <a class="ogx-pager-next" rel="next" href={gameUrl(next.id)}><span>Next →</span><strong>{next.title}</strong></a>
+    </nav>
+  </main>
+
+  <script is:inline>
+    document.addEventListener("keydown", function (e) {
+      if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+      var t = e.target && e.target.tagName;
+      if (t === "INPUT" || t === "TEXTAREA" || t === "SELECT") return;
+      var sel = e.key === "ArrowLeft" ? ".ogx-pager-prev" : e.key === "ArrowRight" ? ".ogx-pager-next" : null;
+      var a = sel && document.querySelector(sel);
+      if (a) window.location.href = a.href;
+    });
+  </script>
+</BaseLayout>

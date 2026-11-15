@@ -6,15 +6,13 @@
 // The game list lives in src/lib/andyOriginalXbox.ts. Covers are looked up by
 // id in public/images/users/andy/original-xbox/ (see src/lib/gameArt.ts);
 // any game without a file shows a title card, so the page is never broken.
+// Each cover links to that game's own page (original-xbox/[id].astro).
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { withBase } from "../../../lib/site";
 import { findGameArt } from "../../../lib/gameArt";
-import { originalXboxGames } from "../../../lib/andyOriginalXbox";
+import { originalXboxGames, sortKey } from "../../../lib/andyOriginalXbox";
 
 const ART_FOLDER = "users/andy/original-xbox";
-
-const sortKey = (t: string) =>
-  t.toLowerCase().replace(/^the\s+/, "").replace(/[^a-z0-9]/g, "");
 
 const games = originalXboxGames
   .map((g) => ({ ...g, art: findGameArt(ART_FOLDER, g.id) }))
@@ -46,8 +44,7 @@ const total = games.length;
     <h1>The Original Xbox Shelf</h1>
     <p class="lede">
       {total} games from the green-and-black era, every one from my own
-      collection. Same box-art treatment as the rest of the Xbox 25
-      celebration.
+      collection. Click any cover for a bigger look and the details.
     </p>
 
     <div class="ogx-toolbar">
@@ -68,15 +65,17 @@ const total = games.length;
         <ul class="ogx-grid">
           {grp.items.map((g) => (
             <li class="ogx-card" data-title={g.title.toLowerCase()}>
-              <div class="ogx-art">
-                {g.art ? (
-                  <img src={g.art} alt={`${g.title} box art`} loading="lazy" />
-                ) : (
-                  <div class="ogx-placeholder"><span>{g.title}</span></div>
-                )}
-              </div>
-              <h3>{g.title}</h3>
-              {g.note && <p class="ogx-note">{g.note}</p>}
+              <a class="ogx-open" href={withBase(`/users/andy/original-xbox/${g.id}/`)}>
+                <span class="ogx-art">
+                  {g.art ? (
+                    <img src={g.art} alt={`${g.title} box art`} loading="lazy" />
+                  ) : (
+                    <span class="ogx-placeholder"><span>{g.title}</span></span>
+                  )}
+                </span>
+                <span class="ogx-title">{g.title}</span>
+                {g.note && <span class="ogx-note">{g.note}</span>}
+              </a>
             </li>
           ))}
         </ul>

@@ -1867,3 +1867,50 @@ a:hover { color: #f2c869; }
 @media (max-width: 640px) {
   .ogx-grid { grid-template-columns: repeat(auto-fill, minmax(136px, 1fr)); gap: 16px 12px; }
 }
+/* ---- Original Xbox: shelf links + per-game pages (round 21) ---- */
+.ogx-open { display: flex; flex-direction: column; gap: 8px; min-width: 0; color: inherit; text-decoration: none; border-radius: 10px; }
+.ogx-open:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+.ogx-art { display: block; }
+.ogx-art .ogx-placeholder, .ogx-game-art .ogx-placeholder { display: flex; }
+.ogx-open:hover .ogx-art { border-color: var(--gold); }
+.ogx-open:hover .ogx-art img { transform: scale(1.05); }
+.ogx-title { font-family: var(--display); font-weight: 700; font-size: 0.92rem; line-height: 1.25; color: var(--ink); overflow-wrap: anywhere; }
+.ogx-open:hover .ogx-title { color: var(--gold); }
+.ogx-open .ogx-note { display: block; font-family: var(--mono); font-size: 0.72rem; color: var(--ink-3); margin: -4px 0 0; }
+
+.simple-page.ogx-gamepage { max-width: 62rem; }
+.ogx-game { display: grid; grid-template-columns: minmax(0, 22rem) minmax(0, 1fr); gap: 36px; margin-top: 28px; align-items: start; }
+.ogx-game-art { aspect-ratio: 3 / 4; border-radius: 14px; overflow: hidden; background: var(--bg-elevated); border: 1px solid var(--rule); }
+.ogx-game-art img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.ogx-game-body { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.simple-page .ogx-game-meta { margin: 0; font-family: var(--mono); font-size: 0.8rem; color: var(--ink-3); letter-spacing: 0.04em; text-transform: uppercase; }
+.simple-page .ogx-game-title { margin: 0; font-family: var(--display); font-weight: 900; font-size: clamp(1.8rem, 4.5vw, 2.8rem); line-height: 1.05; text-wrap: balance; }
+.simple-page .ogx-game-edition { margin: 0; font-family: var(--mono); font-size: 0.85rem; color: var(--gold); }
+.ogx-chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.ogx-chips li { font-family: var(--mono); font-size: 0.75rem; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--gold-dim); color: var(--gold); }
+.simple-page .ogx-game-desc { margin: 0; font-size: 1.12rem; line-height: 1.65; color: var(--ink-2); max-width: 65ch; }
+.ogx-facts { display: grid; grid-template-columns: auto 1fr; gap: 8px 18px; margin: 4px 0 0; }
+.ogx-facts dt { font-family: var(--mono); font-size: 0.75rem; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.04em; padding-top: 3px; }
+.ogx-facts dd { margin: 0; color: var(--ink); }
+.simple-page .ogx-game-owned { margin: 6px 0 0; font-family: var(--mono); font-size: 0.8rem; color: var(--ink-3); }
+.ogx-gallery { margin-top: 40px; }
+.simple-page .ogx-gallery h2 { font-family: var(--display); font-weight: 900; font-size: 1.3rem; margin: 0 0 14px; }
+.ogx-gallery ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+.ogx-gallery a { display: block; border-radius: 10px; overflow: hidden; border: 1px solid var(--rule); background: var(--bg-elevated); }
+.ogx-gallery a:hover { border-color: var(--gold); }
+.ogx-gallery a:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.ogx-gallery img { display: block; width: 100%; height: auto; }
+.ogx-pager { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 16px; align-items: center; margin-top: 44px; padding-top: 22px; border-top: 1px solid var(--rule); }
+.ogx-pager a { display: flex; flex-direction: column; gap: 4px; min-width: 0; padding: 12px 16px; border: 1px solid var(--rule); border-radius: 12px; background: var(--bg-elevated); color: inherit; text-decoration: none; transition: border-color var(--fast) var(--ease), transform var(--fast) var(--ease); }
+.ogx-pager a:hover { border-color: var(--gold); transform: translateY(-2px); }
+.ogx-pager a:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.ogx-pager a span { font-family: var(--mono); font-size: 0.75rem; color: var(--ink-3); }
+.ogx-pager a strong { font-family: var(--display); font-weight: 700; font-size: 0.95rem; line-height: 1.25; overflow-wrap: anywhere; }
+.ogx-pager-next { text-align: right; }
+.ogx-pager-pos { font-family: var(--mono); font-size: 0.8rem; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+@media (max-width: 720px) {
+  .ogx-game { grid-template-columns: 1fr; gap: 22px; }
+  .ogx-game-art { width: min(18rem, 80%); justify-self: center; }
+  .ogx-pager { grid-template-columns: 1fr 1fr; }
+  .ogx-pager-pos { grid-column: 1 / -1; grid-row: 1; text-align: center; }
+}

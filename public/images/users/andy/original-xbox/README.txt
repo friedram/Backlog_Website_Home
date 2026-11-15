@@ -34,3 +34,20 @@ Currently showing a title card (no matching Xbox-era cover found yet):
   timesplitters-2.jpg   (TimeSplitters 2)
   timesplitters-future-perfect.jpg   (TimeSplitters: Future Perfect)
   tron-2-0-killer-app.jpg   (Tron 2.0: Killer App)
+
+Bigger pictures (optional)
+--------------------------
+Clicking a cover opens that game's own page. It shows the normal cover by default. For a
+sharper image there, add a second file named <id>-large.jpg (or .png / .webp) in this folder,
+e.g. halo-2-large.jpg. No other change is needed; the game page picks it up at build time.
+
+Extra pictures for a game (optional, your own screenshots/photos)
+-----------------------------------------------------------------
+Make a folder in this directory named exactly like the game's id and put images in it:
+
+  original-xbox/halo-2/shot1.jpg
+  original-xbox/halo-2/shot2.jpg
+
+They show up as a "More pictures" gallery on that game's page, in filename order
+(1, 2, 10 sort correctly). Click a picture to open it full size. Games with no folder
+simply have no gallery. Allowed types: jpg, jpeg, png, webp, gif, svg.
