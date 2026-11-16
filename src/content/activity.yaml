@@ -11,6 +11,8 @@
 # date is a plain YYYY-MM-DD string, shown as-is — no relative-time math,
 # so there's nothing to get wrong across time zones or stale builds.
 
+- text: "Published Episode 45 — Activision Blizzard King joins Xbox"
+  date: "2026-11-15"
 - text: "Added The Witcher 3 and Warhammer 40,000: Rogue Trader to the ranking"
   date: "2026-09-24"
 - text: "Published Episode 0 — What Happened to Chun Li's Face?!"
